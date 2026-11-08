@@ -1,0 +1,2313 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cyber Escape: The Last Firewall – Full Edition</title>
+<style>
+/* ==========================================================================
+   CYBER ESCAPE: UNIFIED DESIGN SYSTEM
+   Thống nhất phong cách Dark Cyberpunk tối giản, nút viên thuốc (pill), màu nhấn Teal (#3fd6c6)
+   ========================================================================== */
+:root {
+  --ground: #050505;
+  --panel: #0e0e0e;
+  --hair: #222222;
+  --hair2: #303030;
+  --bright: #f2f2f2;
+  --read: #a6a9ad;
+  --meta: #8a8d91;
+  --live: #3fd6c6;
+  --ink: #0a0a0a;
+  --warn: #d9b45a;
+  --danger: #e5736a;
+  
+  /* Aliases tương thích Level 3 & Level 4 */
+  --dp-color-ground: var(--ground);
+  --dp-color-ground-tint: #141414;
+  --dp-color-panel: var(--panel);
+  --dp-color-accent: var(--live);
+  --dp-color-value: var(--bright);
+  --dp-color-ink: var(--bright);
+  --dp-color-ink-muted: var(--read);
+  --dp-color-line: var(--hair);
+  --dp-color-hairline-2: var(--hair2);
+  --dp-color-neutral: var(--meta);
+  --dp-color-success: var(--live);
+  --dp-color-warning: var(--warn);
+  --dp-color-danger: var(--danger);
+  --dp-color-dim: var(--meta);
+  --dp-color-inverse-ink: #0a0a0a;
+  --dp-color-meta: var(--meta);
+  --dp-color-live: var(--live);
+  --dp-color-read: var(--read);
+  --dp-color-bright: var(--bright);
+  --dp-color-on-accent: #0a0a0a;
+  --g: var(--live);
+  --w: var(--warn);
+  --d: var(--danger);
+  --s: var(--read);
+  
+  --cv-color-background: var(--ground);
+  --cv-color-background-secondary: #141414;
+  --cv-color-panel: var(--panel);
+  --cv-color-panel-hover: #161616;
+  --cv-color-accent: var(--live);
+  --cv-color-value: var(--bright);
+  --cv-color-success: var(--live);
+  --cv-color-warning: var(--warn);
+  --cv-color-danger: var(--danger);
+  --cv-color-text: var(--bright);
+  --cv-color-text-muted: var(--read);
+  --cv-color-border: var(--hair);
+  --cv-font-display: var(--face);
+  --cv-font-body: var(--face);
+  --cv-font-mono: var(--mono);
+  --cv-shadow-glow: 0 0 24px rgba(63,214,198,.12);
+  
+  --face: "Inter", "Noto Sans", "Open Sans", Roboto, "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, Menlo, monospace;
+  --gutter: 48px;
+  --gap: 24px;
+  --max: 1360px;
+  --r: 6px;
+  --pill: 999px;
+  --dur: 180ms;
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; height: 100%; }
+body {
+  background: var(--ground) radial-gradient(ellipse 70% 38% at 50% -6%, rgba(255,255,255,.16), transparent 70%) no-repeat fixed;
+  color: var(--bright);
+  font: 16px/1.6 var(--face);
+  overflow-x: hidden;
+  position: relative;
+}
+::selection { background: rgba(63,214,198,.30); color: #fff; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: #262626; border-radius: var(--pill); }
+::-webkit-scrollbar-thumb:hover { background: #383838; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* Typography */
+h1, h2, h3, h4 { margin: .3em 0; font-weight: 400; line-height: 1.25; }
+p { margin: .6em 0; }
+.eyebrow { font-family: var(--mono); letter-spacing: .2em; font-size: 13px; color: var(--live); }
+.title { font-size: clamp(34px, 5vw, 48px); margin: .1em 0; color: var(--bright); }
+.tagline { font-style: normal; color: var(--bright); font-size: 17px; margin-bottom: 16px; }
+.small { font-size: 13px; color: var(--meta); }
+.dim { font-size: 16px; color: var(--read); }
+
+/* Animations */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes fade {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Screens */
+.screen {
+  position: fixed; inset: 0; display: none; flex-direction: column; align-items: flex-start; justify-content: flex-start;
+  gap: 14px; padding: 24px max(var(--gutter), calc((100% - var(--max))/2)); overflow: auto; z-index: 10;
+}
+.screen.active { display: flex; }
+.screen.active > * { animation: rise .45s var(--ease) both; }
+.screen.active > *:nth-child(2) { animation-delay: .06s; }
+.screen.active > *:nth-child(3) { animation-delay: .12s; }
+.screen.active > *:nth-child(n+4) { animation-delay: .18s; }
+
+#intro, #story, #selectHub, #end { max-width: none; padding-top: 8vh; }
+#intro > *, #story > *, #end > * { max-width: 900px; }
+
+/* Buttons */
+.btn {
+  font: inherit; font-size: 15px; cursor: pointer; background: transparent; color: var(--bright);
+  border: 1px solid var(--hair2); border-radius: var(--pill); padding: 9px 20px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.btn:hover { border-color: var(--bright); transform: translateY(-1px); }
+.btn:active { transform: scale(.98); }
+.btn:disabled { opacity: .4; cursor: not-allowed; transform: none; border-color: var(--hair); }
+
+.btn.big { font-size: 17px; padding: 11px 28px; }
+.btn.g, .btn.primary { background: var(--bright); color: var(--ink); border-color: var(--bright); font-weight: 500; }
+.btn.g:hover, .btn.primary:hover { background: #fff; border-color: #fff; }
+
+.btn.accent { background: var(--live); color: var(--ink); border-color: var(--live); font-weight: 500; }
+.btn.accent:hover { background: #5ef3e4; border-color: #5ef3e4; }
+
+.btn.alt { color: var(--read); }
+.btn.alt:hover { color: var(--bright); }
+.btn.danger-btn { color: var(--danger); border-color: rgba(229,115,106,.4); }
+.btn.danger-btn:hover { border-color: var(--danger); background: rgba(229,115,106,.15); }
+.btn.small-btn { padding: 4px 14px; font-size: 13px; }
+
+.btn:focus-visible, .opt:focus-visible, .hot:focus-visible, input:focus-visible, .bin-chip:focus-visible { outline: 2px solid var(--bright); outline-offset: 3px; }
+
+.top-bar-controls {
+  position: fixed; top: 12px; right: 14px; z-index: 65; display: flex; gap: 8px;
+}
+.icon-btn {
+  background: var(--panel); border: 1px solid var(--hair2); color: var(--bright); height: 36px; padding: 0 14px; border-radius: var(--pill); cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: border-color var(--dur);
+}
+.icon-btn:hover { border-color: var(--bright); }
+
+.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+/* Panels & Terminals */
+.panel {
+  background: var(--panel); border: 1px solid var(--hair); border-radius: var(--r); padding: 20px; width: 100%; margin-top: var(--gap);
+}
+.panel h3 { margin: 0 0 10px; font-size: 19px; }
+.term {
+  width: 100%; white-space: pre-wrap; font: 14px/1.8 var(--mono); color: var(--read); background: var(--panel); border: 1px solid var(--hair); border-left: 3px solid var(--live); border-radius: var(--r); padding: 20px; min-height: 240px; margin: 0;
+}
+
+/* HUD */
+#game { padding-top: 18px; }
+.hud {
+  width: 100%; display: flex; gap: 14px 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--hair); border-radius: var(--r); padding: 12px 20px; font-size: 14px; color: var(--read); margin-right: 0;
+}
+.hud b { color: var(--bright); font-weight: 400; font-family: var(--mono); }
+.hud-l, .hud-m, .hud-r { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.progress { width: 180px; height: 4px; background: var(--hair); border-radius: var(--pill); overflow: hidden; }
+#bar { height: 100%; width: 0; background: var(--bright); transition: width .5s var(--ease); }
+.key-badge {
+  display: inline-flex; align-items: center; gap: 3px; border: 1px solid var(--hair2); color: var(--meta); padding: 1px 8px; border-radius: var(--pill); font-size: 12px; font-family: var(--mono); transition: all var(--dur);
+}
+.key-badge.on { color: var(--live); border-color: var(--live); background: rgba(63,214,198,.08); }
+#timer.over { color: var(--danger); }
+#stage { width: 100%; flex: 1; }
+.prompt {
+  border-left: 2px solid var(--hair2); padding: 6px 16px; margin-bottom: var(--gap); color: var(--read); font-size: 15px;
+}
+.prompt b { color: var(--bright); font-weight: 400; }
+
+/* Level 1: Cards */
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); width: 100%; }
+.card {
+  background: var(--panel); border: 1px solid var(--hair); border-radius: var(--r); padding: 20px; display: grid; grid-template-columns: 88px 1fr; gap: 4px 16px; align-items: center; transition: border-color var(--dur) var(--ease);
+}
+.card:hover { border-color: var(--hair2); }
+.card.flag { border-color: var(--danger); background: rgba(229,115,106,.05); }
+.card h3 { margin: 0; font-size: 19px; }
+.tag { grid-column: 1/3; color: var(--meta); font: 12px var(--mono); letter-spacing: .1em; }
+.av { width: 84px; height: 84px; grid-row: span 2; margin-top: 8px; border-radius: 50%; box-shadow: 0 0 0 3px #1c1c1c, 0 0 0 4px var(--hair2); }
+.user { color: var(--read); font: 13px var(--mono); }
+.bio { grid-column: 1/3; color: var(--read); margin: 8px 0; font-size: 15px; }
+.card dl { grid-column: 1/3; display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; font-size: 14px; border-top: 1px solid var(--hair); padding-top: 10px; margin: 0; }
+.card dt { color: var(--meta); } .card dd { margin: 0; color: var(--bright); }
+.card .pick { grid-column: 1/3; margin-top: 10px; }
+.checks { display: grid; gap: 8px; margin-bottom: 14px; }
+.checks label {
+  display: flex; gap: 12px; align-items: center; padding: 10px 14px; border: 1px solid var(--hair2); border-radius: var(--r); cursor: pointer; color: var(--read); transition: all var(--dur) var(--ease);
+}
+.checks label:hover { border-color: var(--bright); color: var(--bright); }
+.checks input { accent-color: var(--bright); width: 18px; height: 18px; }
+
+/* Level 2: Mail */
+.mail-wrap { display: grid; grid-template-columns: 2fr 1fr; gap: var(--gap); align-items: start; width: 100%; }
+.mail { background: var(--panel); border: 1px solid var(--hair); border-radius: var(--r); overflow: hidden; }
+.mail-bar { background: var(--ground); border-bottom: 1px solid var(--hair); padding: 8px 16px; color: var(--meta); font: 12px var(--mono); display: flex; gap: 6px; align-items: center; letter-spacing: .08em; }
+.mail-bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--hair2); display: inline-block; }
+.mail-head { padding: 14px 20px; border-bottom: 1px solid var(--hair); display: grid; gap: 4px; color: var(--read); font-size: 14.5px; }
+.mail-body { padding: 20px; display: grid; gap: 12px; color: var(--read); font-size: 15px; line-height: 1.7; }
+.hot { cursor: pointer; border-bottom: 1px dashed var(--warn); color: var(--bright); transition: background var(--dur); }
+.hot:hover { background: rgba(217,180,90,.18); }
+.hot.found { background: rgba(229,115,106,.18); border-bottom: 1px solid var(--danger); }
+.btn-fake { display: inline-block; background: var(--hair2); padding: 8px 22px; border-radius: var(--pill); border-bottom: none; }
+.btn-fake.found { background: rgba(229,115,106,.3); }
+.info { min-height: 80px; color: var(--read); font-size: 14.5px; } .info b { color: var(--bright); font-weight: 400; }
+.chip { display: inline-block; margin: 6px 6px 0 0; padding: 2px 10px; border: 1px solid var(--hair2); border-radius: var(--r); color: var(--danger); font: 12px var(--mono); }
+.opt {
+  display: block; width: 100%; text-align: left; margin-top: 8px; padding: 12px 16px; background: transparent; color: var(--read); border: 1px solid var(--hair2); border-radius: var(--r); cursor: pointer; font: inherit; font-size: 15.5px; transition: all var(--dur) var(--ease);
+}
+.opt:hover { border-color: var(--bright); color: var(--bright); }
+.opt b { font-weight: 400; color: var(--bright); }
+.opt.sel { border-color: var(--bright); color: var(--bright); background: rgba(255,255,255,.05); }
+.opt.done { border-color: var(--live); color: var(--live); cursor: default; }
+
+/* Level 3: Encryption Core */
+.mono {
+  font-family: var(--mono); font-size: clamp(18px, 2.5vw, 25px); letter-spacing: .12em; color: var(--bright); font-variant-numeric: tabular-nums; background: var(--ground); border: 1px solid var(--hair); border-radius: var(--r); padding: 12px 16px; word-break: break-word; text-align: center;
+}
+input[type=text] {
+  width: 100%; max-width: 440px; background: var(--ground); border: 1px solid var(--hair2); color: var(--bright); padding: 10px 14px; border-radius: var(--r); font-family: var(--mono); font-size: 17px; text-transform: uppercase; caret-color: var(--live); transition: border-color var(--dur);
+}
+input[type=text]:focus { border-color: var(--live); }
+input[type=range] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 26px; background: transparent; cursor: pointer; accent-color: var(--live); margin: 10px 0;
+}
+input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: var(--pill); background: var(--hair2); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: -7px; border-radius: 50%; background: var(--live); border: 2px solid var(--ground); }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+.bin-chip {
+  border: 1px solid var(--hair2); border-radius: var(--r); padding: 8px 12px; font-family: var(--mono); font-size: 13.5px; cursor: pointer; text-align: center; min-width: 100px; background: var(--ground); transition: all var(--dur);
+}
+.bin-chip:hover { border-color: var(--live); }
+.bin-chip.done { border-color: var(--live); color: var(--live); background: rgba(63,214,198,.10); }
+.g2b { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap); }
+.scr { overflow-x: auto; margin: 10px 0; }
+.lrow { min-width: 560px; margin: 6px 0; }
+.lrow > span { display: block; color: var(--read); font-size: 13px; margin-bottom: 4px; }
+.top, .strip { display: grid; font-family: var(--mono); text-align: center; }
+.top { grid-template-columns: repeat(26, 1fr); }
+.strip { grid-template-columns: repeat(78, 1fr); width: 300%; transition: transform 280ms var(--ease); }
+.win { overflow: hidden; width: 100%; }
+.top i, .strip i { font-style: normal; padding: 6px 0; border: 1px solid var(--hair); font-size: 13px; color: var(--meta); }
+.top i { background: #141414; } .strip i { background: var(--ground); }
+.top i.hl, .strip i.hl { color: #0a0a0a; background: var(--live); font-weight: 600; }
+.wt { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; max-width: 520px; text-align: center; font-family: var(--mono); margin: 8px 0; }
+.wt div { border: 1px solid var(--hair2); border-radius: var(--r); padding: 6px 0; }
+.wt small { display: block; color: var(--meta); font-size: 11px; }
+.wt .on { background: var(--live); color: #0a0a0a; font-weight: 600; } .wt .on small { color: #0a0a0a; }
+.lg { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding: 8px 0; border-top: 1px solid var(--hair); }
+.lg:first-of-type { border-top: 0; }
+.lg .tag, .lg .st { font-family: var(--mono); font-size: 12px; letter-spacing: .06em; }
+.lg .st { color: var(--meta); } .lg.d .st { color: var(--live); }
+.lg .dt { grid-column: 1/3; font-family: var(--mono); font-size: 13px; color: var(--read); word-break: break-word; }
+.lg .dt b { color: var(--bright); font-weight: 500; }
+.lg.d { border-left: 2px solid var(--live); padding-left: 10px; }
+.corep { text-align: center; }
+.corep svg { filter: drop-shadow(0 0 16px rgba(63,214,198,.07)); }
+
+/* Level 4: Incident Response & Network Map */
+.grid2 { display: grid; grid-template-columns: 1fr 1.6fr; gap: var(--gap); }
+.nmap { width: 100%; min-width: 440px; height: auto; }
+.ln { stroke-width: 2; stroke: var(--sc, var(--meta)); transition: stroke .3s; }
+.ln.s-ok { stroke-dasharray: 6 6; }
+.nd, .srv { cursor: pointer; outline: none; }
+.nd rect, .srv rect { fill: var(--panel); stroke-width: 2; stroke: var(--sc, var(--meta)); transition: all .2s; }
+.nd:hover rect { fill: #181818; }
+.nd.sel rect { fill: #1c1c1c; }
+.nd .t1, .srv .t1 { font-size: 13px; fill: var(--bright); font-family: var(--mono); }
+.nd .t2, .srv .t2 { font-size: 11px; fill: var(--sc, var(--meta)); font-family: var(--mono); }
+.s-normal { --sc: var(--meta); color: var(--meta); }
+.s-warn { --sc: var(--warn); color: var(--warn); }
+.s-danger { --sc: var(--danger); color: var(--danger); }
+.s-ok { --sc: var(--live); color: var(--live); }
+.leg span { margin-right: 14px; font-size: 13px; }
+.leg .lgdot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; margin-right: 6px; }
+.tl { list-style: none; margin: 0; padding: 0; }
+.tl li { display: flex; gap: 12px; padding: 8px 0; border-left: 2px solid var(--hair2); padding-left: 14px; margin-left: 6px; position: relative; opacity: .55; transition: opacity .3s, border-color .3s; }
+.tl li.on { opacity: 1; border-color: var(--live); }
+.tl li.cur { opacity: .95; border-color: var(--bright); }
+.tl .dot { position: absolute; left: -7px; top: 14px; width: 12px; height: 12px; border-radius: 50%; background: var(--ground); border: 2px solid var(--hair2); }
+.tl li.on .dot { background: var(--live); border-color: var(--live); box-shadow: 0 0 10px rgba(63,214,198,.45); }
+.mts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.mt .bar { margin: 6px 0; height: 6px; background: var(--ground); border-radius: var(--pill); overflow: hidden; }
+.mt .bar i { display: block; height: 100%; border-radius: var(--pill); }
+.mt b { font-family: var(--mono); font-size: 13px; font-weight: 500; }
+.b-ok { background: var(--live) !important; } .b-warn { background: var(--warn) !important; } .b-danger { background: var(--danger) !important; }
+.inc { padding: 6px 10px; border-radius: var(--r); margin: 4px 0; border: 1px solid var(--hair); color: var(--read); font-size: 13.5px; }
+.inc.ok2 { border-color: rgba(63,214,198,.55); color: var(--live); background: rgba(63,214,198,.08); }
+
+/* Level 5: Severity & Matching */
+.sevrow { grid-column: 1/3; display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
+/* Mission Hub */
+.hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; width: 100%; }
+.hub-card {
+  background: var(--panel); border: 1px solid var(--hair); border-radius: var(--r); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: border-color var(--dur);
+}
+.hub-card:hover { border-color: var(--hair2); }
+.hub-card.active-card { border-color: rgba(63,214,198,.4); }
+.hub-card.locked-card { opacity: .5; }
+.hub-code { font-family: var(--mono); font-size: 12px; color: var(--live); letter-spacing: .15em; }
+.hub-title { font-size: 18px; margin: 2px 0 6px; }
+.hub-desc { font-size: 13.5px; color: var(--read); flex: 1; margin: 0; }
+.hub-meta { display: flex; justify-content: space-between; font-size: 13px; font-family: var(--mono); border-top: 1px solid var(--hair); padding-top: 8px; color: var(--meta); }
+
+/* Modal & Toast */
+#overlay {
+  position: fixed; inset: 0; z-index: 80; display: none; align-items: center; justify-content: center;
+  background: rgba(5,5,5,.75) radial-gradient(ellipse 60% 40% at 50% 0, rgba(255,255,255,.14), transparent 70%);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); padding: 16px; overflow: auto;
+}
+#overlay.open { display: flex; animation: fade .25s var(--ease); }
+.modal {
+  width: min(640px, 100%); background: var(--panel); border: 1px solid var(--hair2); border-radius: var(--r); padding: 28px; text-align: left;
+}
+.m-title { font-size: clamp(24px, 4vw, 34px); font-weight: 400; color: var(--bright); line-height: 1.2; }
+.m-sub { color: var(--read); margin: 6px 0 4px; font: 13px var(--mono); letter-spacing: .05em; }
+.modal.ok { border-color: var(--live); } .modal.ok .m-title { color: var(--live); }
+.modal.danger { border-color: var(--danger); } .modal.danger .m-title { color: var(--danger); }
+.modal.warn { border-color: var(--warn); } .modal.warn .m-title { color: var(--warn); }
+.m-body { color: var(--read); margin: 14px 0 20px; font-size: 15px; }
+.m-body b { color: var(--bright); font-weight: 400; }
+.m-body ul { padding-left: 20px; display: grid; gap: 6px; margin: 8px 0; }
+.m-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+#toast {
+  position: fixed; right: 20px; top: 20px; background: var(--bright); color: var(--ink); padding: 8px 18px; border-radius: var(--pill); font: 13px var(--mono); font-weight: 500; z-index: 100; opacity: 0; transform: translateY(-8px); transition: .3s var(--ease); pointer-events: none;
+}
+#toast.show { opacity: 1; transform: none; }
+
+/* Stats End */
+.stats { display: grid; gap: 12px; background: var(--panel); border: 1px solid var(--hair); border-radius: var(--r); padding: 22px; width: 100%; max-width: 620px; color: var(--read); }
+.stats b { color: var(--bright); font-weight: 400; font-family: var(--mono); }
+.stats .rank { font-size: 24px; color: var(--live); font-family: var(--face); }
+.stats .ph { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--hair); padding-bottom: 6px; }
+
+@media(max-width: 900px) {
+  .cards, .mail-wrap, .grid2, .g2b { grid-template-columns: 1fr; }
+  :root { --gutter: 20px; }
+  body { overflow: auto; }
+  .screen { padding: 18px; }
+  .mts { grid-template-columns: 1fr; }
+}
+@media(prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP CONTROLS -->
+<div class="top-bar-controls">
+  <button id="hubBtn" class="icon-btn" title="Chọn màn chơi">☰ MÀN CHƠI</button>
+  <button id="muteBtn" class="icon-btn" title="Bật/tắt âm thanh">🔊</button>
+</div>
+
+<!-- ==========================================================================
+     1. INTRO SCREEN
+     ========================================================================== -->
+<section id="intro" class="screen active">
+  <div class="eyebrow">CYBERVERSE PRESENTS</div>
+  <h1 class="title">THE LAST FIREWALL</h1>
+  <p class="tagline">"One system. Five final defense layers. Your mission begins now."</p>
+  <div class="row">
+    <button id="initBtn" class="btn big g">INITIALIZE SYSTEM</button>
+    <button id="contBtn" class="btn alt" hidden>CONTINUE</button>
+    <button id="lobbyHubBtn" class="btn alt">SELECT LEVEL</button>
+  </div>
+  <p class="small" style="margin-top:20px;">Mô phỏng giáo dục an toàn thông tin mạng. Game không yêu cầu nhập mật khẩu hay thông tin cá nhân thật.</p>
+</section>
+
+<!-- ==========================================================================
+     2. MISSION HUB SCREEN
+     ========================================================================== -->
+<section id="selectHub" class="screen">
+  <div class="eyebrow">MISSION CONTROL HUB</div>
+  <h2 class="title" style="font-size: 32px;">DANH SÁCH 5 TUYẾN PHÒNG THỦ</h2>
+  <p class="dim">Chọn một màn chơi để tiến hành điều tra, thu thập Security Keys và khôi phục hệ thống CYBERVERSE.</p>
+  <div id="hubList" class="hub-grid"></div>
+  <div class="row" style="margin-top: 16px;">
+    <button id="backToIntroFromHub" class="btn alt">← VỀ TRANG CHỦ</button>
+    <button id="resetAllProgressBtn" class="btn danger-btn small-btn">RESET TIẾN TRÌNH</button>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     3. BOOT & STORY SCREEN
+     ========================================================================== -->
+<section id="story" class="screen">
+  <div class="eyebrow">TRANSMISSION KERNEL</div>
+  <pre id="storyText" class="term"></pre>
+  <button id="storyGo" class="btn big g" style="display:none">ENTER IDENTITY CORE</button>
+  <p class="small">Nhấn vào màn hình để bỏ qua hiệu ứng gõ chữ</p>
+</section>
+
+<!-- ==========================================================================
+     4. GAME PLAY HUD & STAGE
+     ========================================================================== -->
+<section id="game" class="screen">
+  <header class="hud">
+    <div class="hud-l">
+      <b id="lvl">LEVEL 01</b>
+      <div class="progress"><div id="bar"></div></div>
+    </div>
+    <div class="hud-m">
+      <span style="font-size:12px;color:var(--meta);letter-spacing:.08em;">KEYS</span>
+      <span id="keys"></span>
+    </div>
+    <div class="hud-r">
+      <span>XP <b id="xp">0 XP</b></span>
+      <span>BONUS <b id="pot">500</b></span>
+      <span>TIME <b id="timer">--:--</b></span>
+      <button id="hintBtn" class="btn small-btn alt">HINT (-25)</button>
+      <button id="menuHubBtn" class="btn small-btn alt">HUB</button>
+    </div>
+  </header>
+  <main id="stage"></main>
+</section>
+
+<!-- ==========================================================================
+     5. FINAL RESTORATION END SCREEN
+     ========================================================================== -->
+<section id="end" class="screen">
+  <div class="eyebrow" style="color:var(--live);">[ SYSTEM RESTORATION COMPLETE ]</div>
+  <h2 class="title" style="font-size:clamp(28px,4vw,40px)">THE LAST FIREWALL RESTORED</h2>
+  <p style="font-size:20px;">"Congratulations, Agent. All 5 Security Layers Secured."</p>
+  <p class="dim">"You have successfully restored the CYBERVERSE security system to 100% operational status."</p>
+  <div id="endStats" class="stats"></div>
+  <div class="row" style="margin-top: 14px;">
+    <button id="replayBtn" class="btn g">REPLAY MISSION</button>
+    <button id="endToHubBtn" class="btn alt">MISSION HUB</button>
+  </div>
+</section>
+
+<div id="overlay"></div>
+<div id="toast"></div>
+
+<!-- ==========================================================================
+     JAVASCRIPT: CORE ENGINE & TẤT CẢ 5 LEVEL NGUYÊN VẸN 100%
+     ========================================================================== -->
+<script>
+'use strict';
+
+/* ===== 1. HELPER & CẤU HÌNH HỆ THỐNG ===== */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const fmt = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+const norm = s => s.toUpperCase().replace(/\s+/g, ' ').trim();
+const caesar = (t, s) => t.replace(/[A-Z]/g, c => String.fromCharCode(((c.charCodeAt(0) - 65 - s) % 26 + 26) % 26 + 65));
+
+const SAVE_KEY = 'cyberEscape.master.v3';
+const HINT_COST = 25, WRONG_COST = 40, OVER_MULT = 0.8, MIN_RATIO = 0.2;
+
+const freshState = () => ({
+  level: 0,
+  scores: [0, 0, 0, 0, 0],
+  keys: [false, false, false, false, false],
+  times: [0, 0, 0, 0, 0],
+  unlocked: [true, false, false, false, false],
+  hintsTotal: 0,
+  wrongsTotal: 0,
+  done: false,
+  muted: false
+});
+
+let S = (() => {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    return raw ? { ...freshState(), ...JSON.parse(raw) } : freshState();
+  } catch(e) {
+    return freshState();
+  }
+})();
+const save = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch(e){} };
+const totalXP = () => S.scores.reduce((a, b) => a + (b || 0), 0);
+
+/* ===== 2. ÂM THANH TỔNG HỢP (WEBAUDIO SYNTHESIZER) ===== */
+let AC = null;
+function beep(f=440, d=0.12, type='sine', v=0.05, delay=0) {
+  if (S.muted) return;
+  try {
+    AC = AC || new (window.AudioContext || window.webkitAudioContext)();
+    const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime + delay;
+    o.type = type; o.frequency.value = f; g.gain.value = v;
+    o.connect(g); g.connect(AC.destination);
+    o.start(t); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.stop(t + d);
+  } catch(e) {}
+}
+const sfx = {
+  click: () => beep(660, 0.06, 'square', 0.03),
+  ok: () => { beep(523, 0.12); beep(784, 0.2, 'sine', 0.05, 0.12); },
+  bad: () => beep(160, 0.3, 'sawtooth', 0.05),
+  key: () => [523, 659, 784, 1047].forEach((f, i) => beep(f, 0.16, 'triangle', 0.05, i * 0.1)),
+  win: () => [523, 659, 784, 1047, 1318].forEach((f, i) => beep(f, 0.2, 'sine', 0.06, i * 0.12))
+};
+
+/* ===== 3. GIAO DIỆN CHUNG: MODAL, TOAST, MÀN HÌNH ===== */
+function show(id) {
+  $$('.screen').forEach(s => s.classList.remove('active'));
+  const el = $('#' + id);
+  if (el) el.classList.add('active');
+}
+
+function modal({ cls='', title, sub='', html='', buttons=[] }) {
+  const o = $('#overlay');
+  o.innerHTML = `
+    <div class="modal ${cls}">
+      <div class="m-title">${title}</div>
+      ${sub ? `<div class="m-sub">${sub}</div>` : ''}
+      <div class="m-body">${html}</div>
+      <div class="m-btns"></div>
+    </div>`;
+  const btnBox = $('.m-btns', o);
+  buttons.forEach(b => {
+    const e = document.createElement('button');
+    e.className = 'btn ' + (b.cls || 'g');
+    e.textContent = b.label;
+    e.onclick = () => {
+      sfx.click();
+      closeModal();
+      b.fn && b.fn();
+    };
+    btnBox.appendChild(e);
+  });
+  o.classList.add('open');
+}
+const closeModal = () => $('#overlay').classList.remove('open');
+
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ===== 4. CỐT TRUYỆN MỞ ĐẦU ===== */
+const BOOT = [
+  '> BOOTING CYBERVERSE DEFENSE KERNEL ........ [OK]',
+  '> LOADING SECURITY MODULES ................. [OK]',
+  '> CONNECTING TO LAST FIREWALL .............. [WARNING]',
+  ''
+];
+const STORY = [
+  'MISSION BRIEFING',
+  'Năm 2089, mạng lưới dữ liệu toàn cầu CYBERVERSE bị một thực thể bí ẩn tấn công.',
+  'THE LAST FIREWALL, tuyến phòng thủ cuối cùng gồm 5 lớp bảo mật, đang dần sụp đổ.',
+  '',
+  'Bạn là một Cyber Agent. Hãy vượt qua các thử thách an toàn thông tin, thu thập Security Keys và khôi phục hệ thống.'
+];
+
+let skip = false;
+async function typeLines(el, lines) {
+  skip = false; el.textContent = '';
+  for (const l of lines) {
+    for (const ch of l) {
+      if (skip) { el.textContent = lines.join('\n'); return; }
+      el.textContent += ch; await sleep(12);
+    }
+    el.textContent += '\n'; await sleep(150);
+  }
+}
+async function boot() {
+  show('story');
+  const b = $('#storyGo');
+  b.style.display = 'none';
+  await typeLines($('#storyText'), [...BOOT, ...STORY]);
+  b.style.display = '';
+}
+$('#story').addEventListener('click', () => { skip = true; });
+
+/* ===== 5. VÒNG ĐỜI MÀN CHƠI (GAME LOOP & HUD) ===== */
+let L = null, tick = null;
+
+const calcScore = () => {
+  const mx = L.lv.max || 500;
+  let s = Math.max(Math.round(mx * MIN_RATIO), mx - L.wrong * WRONG_COST - L.hints * HINT_COST);
+  return L.over ? Math.round(s * OVER_MULT) : s;
+};
+
+function hud() {
+  const i = L ? L.i : S.level;
+  const lvObj = LEVELS[i];
+  $('#lvl').textContent = lvObj ? lvObj.code : `LEVEL 0${i+1}`;
+  
+  const frac = L ? (L.done ? 1 : (L.p != null ? L.p / L.n : L.step / (L.totalSteps || 1))) : 0;
+  $('#bar').style.width = Math.min(100, Math.round(frac * 100)) + '%';
+  
+  $('#keys').innerHTML = LEVELS.map((l, k) => `
+    <span class="key-badge ${S.keys[k] ? 'on' : ''}" title="${l.name}: ${S.keys[k] ? 'Đã thu thập' : 'Chưa có'}">
+      ${S.keys[k] ? '⚿' : '🔒'} 0${k+1}
+    </span>
+  `).join('');
+  
+  $('#xp').textContent = totalXP() + ' XP';
+  if (L) $('#pot').textContent = calcScore();
+}
+
+function drawTimer() {
+  const t = $('#timer');
+  if (!L) return;
+  t.textContent = L.over ? 'OVERTIME' : fmt(L.left);
+  t.classList.toggle('over', L.over);
+}
+
+function startTimer() {
+  clearInterval(tick);
+  tick = setInterval(() => {
+    if (!L || L.done) return;
+    L.elapsed++;
+    if (L.left > 0) {
+      L.left--;
+    } else if (!L.over) {
+      L.over = true;
+      toast('OVERTIME: điểm thưởng giảm 20%');
+      hud();
+    }
+    drawTimer();
+  }, 1000);
+  drawTimer();
+}
+
+function startLevel(i) {
+  clearInterval(tick);
+  if (i >= LEVELS.length) {
+    L = null;
+    return endGame();
+  }
+  const lv = LEVELS[i];
+  S.level = i;
+  S.unlocked[i] = true;
+  save();
+  
+  L = {
+    i,
+    lv,
+    wrong: 0,
+    hints: 0,
+    left: lv.time || 420,
+    elapsed: 0,
+    over: false,
+    done: false,
+    step: 0,
+    totalSteps: lv.totalSteps || 1,
+    p: 0,
+    n: lv.totalSteps || 1
+  };
+  
+  const st = $('#stage');
+  st.onclick = null;
+  st.innerHTML = '';
+  
+  show('game');
+  hud();
+  drawTimer();
+  
+  modal({
+    cls: i === 4 ? 'danger' : '',
+    title: lv.alertTitle,
+    sub: lv.code + ' · ' + lv.name,
+    html: lv.alert.map(t => `<p>${t}</p>`).join(''),
+    buttons: [{
+      label: 'START MISSION',
+      cls: 'g',
+      fn: () => {
+        lv.start(st);
+        hud();
+        startTimer();
+      }
+    }]
+  });
+}
+
+const api = {
+  wrong(msg) {
+    L.wrong++;
+    S.wrongsTotal = (S.wrongsTotal || 0) + 1;
+    save();
+    sfx.bad();
+    hud();
+    modal({
+      cls: 'danger',
+      title: 'SYSTEM WARNING',
+      sub: `-${WRONG_COST} XP bonus · bạn có thể thử lại`,
+      html: msg,
+      buttons: [
+        { label: 'RETRY' },
+        { label: 'USE HINT', cls: 'alt', fn: () => $('#hintBtn').click() }
+      ]
+    });
+  },
+  done(title, html) {
+    L.done = true;
+    clearInterval(tick);
+    const sc = calcScore();
+    const idx = L.i;
+    const lv = L.lv;
+    
+    S.scores[idx] = Math.max(S.scores[idx] || 0, sc);
+    S.keys[idx] = true;
+    S.times[idx] = (S.times[idx] || 0) + L.elapsed;
+    if (idx + 1 < LEVELS.length) {
+      S.unlocked[idx + 1] = true;
+      S.level = idx + 1;
+    } else {
+      S.done = true;
+    }
+    save();
+    hud();
+    sfx.key();
+    
+    modal({
+      cls: 'ok',
+      title,
+      sub: `+${sc} XP &nbsp;|&nbsp; 🔑 ${lv.key} ACQUIRED`,
+      html,
+      buttons: [{
+        label: idx + 1 < LEVELS.length ? `CONTINUE TO LEVEL 0${idx+2}` : 'RESTORE FIREWALL',
+        cls: 'g',
+        fn: () => startLevel(idx + 1)
+      }]
+    });
+  }
+};
+
+$('#hintBtn').onclick = () => {
+  if (!L || L.done) return;
+  L.hints++;
+  S.hintsTotal = (S.hintsTotal || 0) + 1;
+  save();
+  hud();
+  sfx.click();
+  modal({
+    cls: 'warn',
+    title: 'HINT',
+    sub: `-${HINT_COST} XP bonus`,
+    html: `<p>${L.lv.hint(L.step)}</p>`,
+    buttons: [{ label: 'OK' }]
+  });
+};
+
+$('#menuHubBtn').onclick = () => {
+  renderHub();
+  show('selectHub');
+};
+
+/* ===== 6. MÀN HÌNH KẾT THÚC ===== */
+function endGame() {
+  S.done = true;
+  save();
+  const xp = totalXP();
+  const maxXP = LEVELS.reduce((a, l) => a + (l.max || 500), 0);
+  const r = xp / maxXP;
+  const rank = r >= 0.9 ? 'LEGENDARY CYBER GUARDIAN' :
+               r >= 0.75 ? 'MASTER DEFENDER' :
+               r >= 0.5 ? 'DIGITAL DEFENDER' : 'ROOKIE AGENT';
+               
+  $('#endStats').innerHTML = `
+    <div>TOTAL XP: <b>${xp} / ${maxXP}</b></div>
+    ${LEVELS.map((l, k) => `
+      <div class="ph">
+        <span>${l.code} · ${l.name}</span>
+        <b>${S.scores[k] || 0} / ${l.max} XP</b>
+      </div>
+    `).join('')}
+    <div>COMPLETION TIME: <b>${fmt(S.times.reduce((a,b)=>a+b,0))}</b></div>
+    <div>HINTS USED: <b>${S.hintsTotal || 0}</b></div>
+    <div>SECURITY KEYS: ${S.keys.map((k, i) => k ? `🔑 <b>KEY 0${i+1}</b>` : `<span style="color:var(--meta)">🔒 KEY 0${i+1}</span>`).join(' &nbsp; ')}</div>
+    <div class="rank">TITLE: ${rank}</div>
+  `;
+  show('end');
+  sfx.win();
+}
+
+/* ==========================================================================
+   7. LEVEL CONTENT MODULES (NGUYÊN VẸN 100% CỦA 5 FILE GỐC)
+   ========================================================================== */
+const LEVELS = [];
+
+/* --------------------------------------------------------------------------
+   LEVEL 1: IDENTITY BREACH (Từ lv1.html)
+   -------------------------------------------------------------------------- */
+const AVATAR = `<svg viewBox="0 0 100 100" class="av" role="img" aria-label="Ảnh đại diện"><defs><clipPath id="avc"><circle cx="50" cy="50" r="50"/></clipPath><linearGradient id="avbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe2f3"/><stop offset="1" stop-color="#8fb0cf"/></linearGradient><radialGradient id="avsk" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#f6cfb0"/><stop offset="1" stop-color="#dfa985"/></radialGradient></defs><g clip-path="url(#avc)"><rect width="100" height="100" fill="url(#avbg)"/><circle cx="18" cy="24" r="14" fill="#fff" opacity=".22"/><circle cx="84" cy="36" r="10" fill="#fff" opacity=".18"/><circle cx="72" cy="12" r="7" fill="#fff" opacity=".15"/><path d="M6 100c2-22 17-31 44-31s42 9 44 31z" fill="#2f4a6d"/><path d="M38 70l12 14 12-14-5-4H43z" fill="#f4f6f8"/><path d="M38 70l12 14-6 16H30z" fill="#3b5b84" opacity=".55"/><path d="M43 58h14v10c0 4-14 4-14 0z" fill="#d49b78"/><ellipse cx="29" cy="47" rx="4" ry="6" fill="#e0ac8a"/><ellipse cx="71" cy="47" rx="4" ry="6" fill="#e0ac8a"/><ellipse cx="50" cy="42" rx="21" ry="25" fill="url(#avsk)"/><path d="M28 41c-3-19 8-28 22-28s26 8 22 28c-2-8-6-13-10-15-7 5-21 6-30 4-2 3-3 7-4 11z" fill="#2a1c15"/><path d="M36 41q4-3 8 0M56 41q4-3 8 0" stroke="#3a281d" stroke-width="2" fill="none" stroke-linecap="round"/><ellipse cx="40" cy="46" rx="2.2" ry="2.6" fill="#241812"/><ellipse cx="60" cy="46" rx="2.2" ry="2.6" fill="#241812"/><circle cx="40.8" cy="45.2" r=".7" fill="#fff"/><circle cx="60.8" cy="45.2" r=".7" fill="#fff"/><path d="M50 47c-1 4-2 7 0 8" stroke="#c78f6c" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M42 59q8 6 16 0" stroke="#a5614a" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="35" cy="55" r="3.5" fill="#f08c7a" opacity=".25"/><circle cx="65" cy="55" r="3.5" fill="#f08c7a" opacity=".25"/></g></svg>`;
+const PAL = {
+  blue: ['#cfe2f3','#8fb0cf','#2a1c15','#2f4a6d'],
+  pink: ['#e7d7f0','#b59ccc','#4a2f22','#7a3b52'],
+  green: ['#d8ead3','#8fbf93','#15110f','#3d4a3a'],
+  sand: ['#f3e3c8','#d1a86a','#5a3a1e','#3a3f4a'],
+  gray: ['#e2e4e7','#a3a8ae','#2b2b2b','#4a4f57'],
+  red: ['#f5d9d6','#d99a94','#3a2a22','#8a3a36']
+};
+const avatar = a => {
+  const [b1,b2,h,sh] = PAL[a.pal], u = a.id;
+  return AVATAR.split('avc').join('avc'+u).split('avbg').join('avbg'+u).split('avsk').join('avsk'+u)
+    .split('#cfe2f3').join(b1).split('#8fb0cf').join(b2).split('#2a1c15').join(h).split('#2f4a6d').join(sh);
+};
+const cardHTML = a => `<article class="card" data-id="${a.id}"><div class="tag">TÀI KHOẢN ${a.id}</div>${avatar(a)}<h3>${a.name}</h3><div class="user">@${a.user}</div><p class="bio">${a.bio}</p><dl><dt>Ngày tạo tài khoản</dt><dd>${a.created}</dd><dt>Người theo dõi</dt><dd>${a.followers}</dd><dt>Xác minh</dt><dd>${a.ver}</dd></dl><button class="btn pick">FLAG AS SUSPICIOUS</button></article>`;
+const NV = 'Chưa xác minh';
+
+const CASES_LV1 = [
+  {
+    prompt: 'Bạn vừa nhận được lời mời kết bạn từ <b>bốn tài khoản lạ</b>. Chỉ một tài khoản là lừa đảo. Hãy quan sát và chọn tài khoản <b>đáng ngờ nhất</b>.',
+    accounts: [
+      { name:'Nguyễn Minh Anh', pal:'blue', user:'minhanh.nguyen', created:2022, followers:'1,250', bio:'Sinh viên | Mê công nghệ', ver:NV, why:'Tài khoản này có lịch sử từ 2022, lượng theo dõi tương đối lớn và nội dung giới thiệu bình thường. Chưa có dấu hiệu bất thường rõ ràng.' },
+      { name:'Phạm Thu Hà', pal:'pink', user:'thuha_official_gift', created:2026, followers:'18', bio:'Nhận quà miễn phí! Bấm vào liên kết để nhận quà độc quyền!', ver:NV, fake:true },
+      { name:'Trần Quốc Huy', pal:'green', user:'huy.tran.photo', created:2021, followers:'3,480', bio:'Nhiếp ảnh | Du lịch | Đà Nẵng', ver:NV, why:'Tài khoản này tồn tại từ 2021, có lượng theo dõi lớn và nội dung giới thiệu bình thường, không có lời mời gọi nào đáng ngờ.' },
+      { name:'Hoàng Gia Bảo', pal:'sand', user:'giabao_2026', created:2026, followers:'41', bio:'Tài khoản mới của mình, nhắn tin nếu cần trao đổi bài tập nhé.', ver:NV, why:'Tài khoản này mới tạo và ít người theo dõi, nhưng nội dung giới thiệu không có mồi nhử hay yêu cầu bấm liên kết. Một dấu hiệu riêng lẻ chưa đủ để kết luận.' }
+    ],
+    signs: [
+      { t:'Tài khoản mới được tạo', ok:1 },
+      { t:'Tên người dùng có dấu hiệu bất thường', ok:1 },
+      { t:'Nội dung quảng cáo quà tặng miễn phí', ok:1 },
+      { t:'Số lượng người theo dõi thấp', ok:1 },
+      { t:'Tên hiển thị là tên người phổ biến' }
+    ],
+    hint: [
+      'So sánh năm tạo tài khoản, số người theo dõi và nội dung giới thiệu. Đừng chỉ nhìn tên hiển thị hay ảnh đại diện, vì hai thứ này rất dễ sao chép. Một vài tài khoản chỉ có một điểm lạ nhưng vẫn có thể là người thật, hãy tìm hồ sơ có nhiều dấu hiệu xấu cùng lúc.',
+      'Hãy chọn các dấu hiệu có thể kiểm chứng từ dữ liệu hồ sơ (thời gian, username, nội dung, lượng theo dõi). Cần ít nhất 3 dấu hiệu rõ ràng, vì một dấu hiệu riêng lẻ chưa đủ để kết luận.'
+    ],
+    done: {
+      title: 'CASE 1 CLEARED',
+      html: f => `<p><b>Tài khoản ${f.id} (${f.user})</b> có nhiều dấu hiệu đáng ngờ cùng lúc:</p><ul>
+        <li><b>Mới tạo (2026) và chỉ 18 người theo dõi</b>: gần như chưa có lịch sử hoạt động.</li>
+        <li><b>Username lạ</b>: thêm "official", "gift" để tạo cảm giác chính thức.</li>
+        <li><b>Hứa quà miễn phí</b>: mồi nhử phổ biến để dụ bấm vào liên kết.</li>
+        <li><b>Tên hiển thị và ảnh đại diện</b> rất dễ làm giả, nên không đủ để tin hoặc kết luận.</li></ul>
+        <p><b>Ghi nhớ:</b> tổng hợp nhiều dấu hiệu, sau đó xác minh qua một kênh độc lập đáng tin cậy.</p>`
+    }
+  },
+  {
+    prompt: 'Một người bạn tên <b>Lê Hoàng Nam</b> nhắn: "Acc cũ bị khóa, kết bạn lại với mình nhé!". Trong danh sách gợi ý có <b>bốn hồ sơ</b>, hai trong số đó trùng tên và ảnh đại diện. Hãy chọn tài khoản <b>đáng ngờ nhất</b>.',
+    accounts: [
+      { name:'Lê Hoàng Nam', pal:'blue', user:'hoangnam.le', created:2020, followers:'862', bio:'Lớp 12A3 | Bóng đá | Game', ver:NV, why:'Tài khoản này dùng từ 2020, có lượng theo dõi hợp lý và nội dung giới thiệu bình thường. Nhiều khả năng đây là hồ sơ thật của bạn bạn.' },
+      { name:'Lê Hoàng Nam', pal:'blue', user:'hoangnam.le.new', created:2026, followers:'9', bio:'Acc cũ bị khóa nên mình lập acc mới. Kết bạn lại giúp mình nhé, cần nhờ chút việc gấp!', ver:NV, fake:true },
+      { name:'Võ Khánh Linh', pal:'pink', user:'khanhlinh.vo', created:2023, followers:'540', bio:'Thích vẽ | Nghe nhạc', ver:NV, why:'Tài khoản này có lịch sử từ 2023, nội dung giới thiệu bình thường và không mạo danh ai.' },
+      { name:'Đặng Tuấn Kiệt', pal:'gray', user:'tuankiet_dang_2026', created:2026, followers:'33', bio:'Mới chuyển trường, mong làm quen với mọi người!', ver:NV, why:'Tài khoản này mới tạo và ít người theo dõi, nhưng không mạo danh ai và cũng không đòi hỏi gì. Hãy tìm hồ sơ vừa mới tạo, vừa sao chép người khác, vừa tạo áp lực.' }
+    ],
+    signs: [
+      { t:'Tài khoản mới tạo (2026), trong khi hồ sơ cũ dùng từ 2020', ok:1 },
+      { t:'Chỉ có 9 người theo dõi', ok:1 },
+      { t:'Dùng lý do "acc cũ bị khóa" để xin kết bạn lại', ok:1 },
+      { t:'Nói "cần nhờ việc gấp", tạo áp lực phải làm ngay', ok:1 },
+      { t:'Chưa được xác minh' }
+    ],
+    hint: [
+      'Hãy tìm hồ sơ sao chép tên và ảnh của người quen nhưng lại có dữ liệu khác hẳn: năm tạo, số người theo dõi, lời nhắn trong bio.',
+      'Chọn các dấu hiệu đáng ngờ có thể kiểm chứng trong hồ sơ. "Chưa xác minh" là bình thường với hầu hết tài khoản cá nhân nên không phải dấu hiệu rõ ràng.'
+    ],
+    done: {
+      title: 'CASE 2 CLEARED',
+      html: f => `<p><b>Tài khoản ${f.id} (${f.user})</b> là kiểu <b>mạo danh người quen</b>:</p><ul>
+        <li><b>Sao chép tên và ảnh</b> của bạn bạn, nhưng mới tạo năm 2026 và chỉ có 9 người theo dõi.</li>
+        <li><b>Lý do "acc cũ bị khóa"</b>: chiêu quen thuộc để bạn kết bạn mà không nghi ngờ.</li>
+        <li><b>"Cần nhờ việc gấp"</b>: thường dẫn tới việc mượn tiền, xin mã xác thực hoặc gửi liên kết lạ.</li></ul>
+        <p><b>Ghi nhớ:</b> trước khi tin, hãy gọi điện hoặc gặp trực tiếp để xác nhận. Đừng chuyển tiền hay gửi mã qua tài khoản mới.</p>`
+    }
+  },
+  {
+    prompt: 'Bạn nhận được tin nhắn từ một tài khoản tự xưng là <b>hỗ trợ của CYBERVERSE</b>. Hãy xem <b>bốn hồ sơ</b> liên quan và chọn tài khoản <b>đáng ngờ nhất</b>.',
+    accounts: [
+      { name:'Cyberverse Support', pal:'gray', user:'cyberverse.support', created:2019, followers:'2.1M', bio:'Trang hỗ trợ chính thức của CYBERVERSE. Chúng tôi không bao giờ hỏi mật khẩu hoặc mã OTP.', ver:'Đã xác minh ✓', why:'Tài khoản này đã xác minh, hoạt động từ 2019, có hàng triệu người theo dõi và còn nhắc không bao giờ hỏi mật khẩu hay mã OTP. Đây là trang chính thức.' },
+      { name:'Cyberverse Support Team', pal:'gray', user:'cyberverse.support.help', created:2026, followers:'27', bio:'Tài khoản của bạn có nguy cơ bị khóa! Nhắn mã OTP để được hỗ trợ ngay.', ver:NV, fake:true },
+      { name:'Cyberverse Fan Club', pal:'red', user:'cyberverse.fanclub', created:2022, followers:'12,300', bio:'Cộng đồng người hâm mộ, không phải tài khoản chính thức.', ver:NV, why:'Tài khoản này tự ghi rõ là cộng đồng người hâm mộ, hoạt động từ 2022 và không đòi thông tin gì. Chưa xác minh không có nghĩa là lừa đảo.' },
+      { name:'Cyber Safety Tips', pal:'green', user:'cybersafety.tips', created:2025, followers:'410', bio:'Mỗi ngày một mẹo an toàn mạng cho học sinh.', ver:NV, why:'Tài khoản này chia sẻ mẹo hữu ích, không mạo danh trang chính thức và không yêu cầu thông tin cá nhân.' }
+    ],
+    signs: [
+      { t:'Yêu cầu gửi mã OTP', ok:1 },
+      { t:'Dọa khóa tài khoản để gây hoảng sợ', ok:1 },
+      { t:'Mới tạo năm 2026 và chỉ có 27 người theo dõi', ok:1 },
+      { t:'Chưa xác minh dù tự nhận là hỗ trợ chính thức', ok:1 },
+      { t:'Có chữ "Cyberverse" trong tên hiển thị' }
+    ],
+    hint: [
+      'So sánh với tài khoản chính thức: năm tạo, số người theo dõi, dấu xác minh và những gì họ yêu cầu bạn làm.',
+      'Đơn vị hỗ trợ thật không bao giờ hỏi mật khẩu hay mã OTP. Hãy chọn các dấu hiệu phù hợp, chỉ cần ít nhất 3 dấu hiệu rõ ràng.'
+    ],
+    done: {
+      title: 'CASE 3 CLEARED',
+      html: f => `<p><b>Tài khoản ${f.id} (${f.user})</b> là kiểu <b>giả mạo bộ phận hỗ trợ</b>:</p><ul>
+        <li><b>Đòi mã OTP</b>: mã này giống chìa khóa tài khoản, không ai chính thức được phép hỏi.</li>
+        <li><b>Dọa khóa tài khoản</b>: tạo nỗi sợ để bạn làm theo mà không kịp nghĩ.</li>
+        <li><b>Mới tạo, ít người theo dõi, chưa xác minh</b> trong khi trang chính thức đã xác minh và hoạt động nhiều năm.</li></ul>
+        <p><b>Ghi nhớ:</b> chỉ liên hệ hỗ trợ qua kênh chính thức bạn tự tìm, không qua tin nhắn bất ngờ.</p>`
+    }
+  }
+];
+
+LEVELS.push({
+  code: 'LEVEL 01',
+  name: 'IDENTITY BREACH',
+  key: 'SECURITY KEY 01',
+  max: 500,
+  time: 420,
+  totalSteps: CASES_LV1.length,
+  alertTitle: 'SYSTEM ALERT',
+  alert: [
+    '<b>Unauthorized identity detected.</b>',
+    'Unknown accounts are attempting to impersonate trusted users.',
+    'Your mission: Identify the suspicious accounts in 3 cases and secure the Identity Core.'
+  ],
+  hint: step => CASES_LV1[L.c]?.hint[step] || CASES_LV1[L.c]?.hint[0],
+  start(st) {
+    L.c = 0;
+    const run = () => {
+      const C = CASES_LV1[L.c];
+      L.step = L.c;
+      L.subStep = 0;
+      L.accs = shuffle(C.accounts).map((a, i) => ({ ...a, id: 'ABCD'[i] }));
+      L.signs = shuffle(C.signs);
+      st.innerHTML = `
+        <div class="prompt"><b>CASE ${L.c+1}/${CASES_LV1.length}</b> · ${C.prompt}</div>
+        <div class="cards">${L.accs.map(cardHTML).join('')}</div>
+        <div id="signs" class="panel" hidden>
+          <h3>Giải thích lựa chọn: chọn các dấu hiệu phù hợp</h3>
+          <div class="checks">${L.signs.map((s, i) => `<label><input type="checkbox" value="${i}"> ${s.t}</label>`).join('')}</div>
+          <button id="sendSigns" class="btn g">SUBMIT ANALYSIS</button>
+        </div>`;
+      st.scrollTop = 0;
+      $('#stage').parentElement.scrollTop = 0;
+      hud();
+    };
+    
+    st.onclick = e => {
+      const C = CASES_LV1[L.c];
+      const pick = e.target.closest('.pick');
+      if (pick && L.subStep === 0) {
+        sfx.click();
+        const id = pick.closest('.card').dataset.id;
+        const a = L.accs.find(x => x.id === id);
+        if (!a.fake) return api.wrong(`Tài khoản ${id}: ${a.why} Hãy so sánh thời gian tạo, username, nội dung giới thiệu và lượng theo dõi của cả bốn hồ sơ.`);
+        L.subStep = 1;
+        sfx.ok();
+        $$('.card', st).forEach(c => c.classList.toggle('flag', c.dataset.id === id));
+        $$('.pick', st).forEach(b => b.style.display = 'none');
+        $('#signs').hidden = false;
+        $('#signs').scrollIntoView({ behavior: 'smooth' });
+      }
+      if (e.target.id === 'sendSigns') {
+        const sel = $$('#signs input:checked').map(i => L.signs[+i.value]);
+        const strong = sel.filter(x => x.ok).length;
+        if (strong < 3) return api.wrong('Chưa đủ bằng chứng. Không nên kết luận một tài khoản là giả chỉ dựa trên một dấu hiệu riêng lẻ. Hãy tìm thêm ít nhất 3 dấu hiệu rõ ràng trong hồ sơ.');
+        const f = L.accs.find(x => x.fake);
+        const last = L.c === CASES_LV1.length - 1;
+        if (last) {
+          L.step = CASES_LV1.length;
+          return api.done(C.done.title, C.done.html(f));
+        }
+        sfx.ok();
+        modal({
+          cls: 'ok',
+          title: C.done.title,
+          sub: `CASE ${L.c+1}/${CASES_LV1.length} · tiếp tục để mở khóa Security Key`,
+          html: C.done.html(f),
+          buttons: [{
+            label: 'NEXT CASE',
+            fn: () => { L.c++; run(); }
+          }]
+        });
+      }
+    };
+    run();
+  }
+});
+
+/* --------------------------------------------------------------------------
+   LEVEL 2: PHISHING STORM (Từ lv2.html)
+   -------------------------------------------------------------------------- */
+const H = (k, t, c='') => `<span class="hot ${c}" data-k="${k}" tabindex="0" role="button">${t}</span>`;
+const CASES_LV2 = [
+  {
+    prompt: 'Hộp thư nhận được một email tự xưng là <b>ngân hàng</b>. Hãy bấm vào các chi tiết gạch vàng, tìm đủ <b>3 dấu hiệu đáng ngờ</b> rồi chọn cách xử lý.',
+    from: H('dom','VietSecure Bank &lt;support@vietsecure-bank-help.top&gt;'),
+    to: 'ban@email.com',
+    subject: '[KHẨN] Tài khoản của bạn sẽ bị khóa sau 30 phút',
+    body: [
+      H('logo','▣ VietSecure Bank · Ngân hàng số an toàn'),
+      H('greet','Kính gửi quý khách,'),
+      'Hệ thống phát hiện hoạt động đăng nhập bất thường. ' + H('urg','Nếu không xác minh trong 30 phút, tài khoản sẽ bị khóa vĩnh viễn.'),
+      H('link','XÁC MINH NGAY','btn-fake'),
+      'Hotline ' + H('hot','1900 5555') + ' · © 2026 VietSecure Bank'
+    ],
+    need: 3,
+    clues: {
+      dom: [1,'Tên miền lạ','Địa chỉ gửi là <b>vietsecure-bank-help.top</b>, không phải tên miền chính thức của ngân hàng. Kẻ gian hay thêm “help”, “support” vào tên miền.'],
+      greet: [1,'Lời chào chung chung','Ngân hàng thật thường gọi đúng tên bạn. “Quý khách” dùng để gửi hàng loạt.'],
+      urg: [1,'Gây áp lực thời gian','Hạn 30 phút và đe dọa khóa vĩnh viễn nhằm khiến bạn bấm trước khi kịp suy nghĩ.'],
+      link: [1,'Liên kết giả','Liên kết thực sự trỏ tới <b>http://vietsecure-login.top/verify</b>, không phải trang chính thức.'],
+      logo: [0,'Logo và màu sắc','Logo rất dễ sao chép, nên có logo không chứng minh thư là thật.'],
+      hot: [0,'Số hotline','Số điện thoại cuối thư cũng có thể bịa. Hãy dùng số in trên thẻ hoặc trên trang chính thức bạn tự tìm.']
+    },
+    opts: [
+      { t:'Bấm XÁC MINH NGAY để kịp giữ tài khoản', why:'Liên kết dẫn tới trang giả để lấy mật khẩu và mã OTP. Sự gấp gáp chính là mồi nhử.' },
+      { t:'Trả lời thư để hỏi xem có đúng là ngân hàng không', why:'Người nhận thư trả lời chính là kẻ lừa đảo. Bạn chỉ xác nhận email của mình đang hoạt động.' },
+      { t:'Không bấm gì. Tự mở app ngân hàng hoặc gọi số in trên thẻ để kiểm tra, rồi báo cáo thư lừa đảo', ok:1 },
+      { t:'Chuyển tiếp thư cho bạn bè hỏi xem có thật không', why:'Chuyển tiếp có thể khiến người khác bấm nhầm liên kết. Hãy báo cáo thư thay vì chia sẻ.' }
+    ],
+    hint: [
+      'Xem kỹ địa chỉ người gửi, lời chào và hạn chót. Đừng tin logo hay số hotline trong thư vì chúng rất dễ làm giả.',
+      'Không dùng bất kỳ liên kết hay số điện thoại nào trong thư. Hãy tự mở kênh chính thức mà bạn đã biết.'
+    ],
+    done: {
+      title: 'CASE 1 CLEARED',
+      html: () => `<p>Đây là thư <b>phishing giả danh ngân hàng</b>:</p><ul><li><b>Tên miền lạ</b> và <b>liên kết dẫn tới trang giả</b>.</li><li><b>Lời chào chung chung</b>, gửi hàng loạt.</li><li><b>Đe dọa khóa tài khoản trong 30 phút</b> để bạn không kịp kiểm tra.</li></ul><p><b>Ghi nhớ:</b> ngân hàng thật không yêu cầu xác minh qua liên kết trong email. Hãy tự mở app hoặc website chính thức.</p>`
+    }
+  },
+  {
+    prompt: 'Email báo có <b>kiện hàng chờ giao</b>, dù bạn không nhớ đã đặt gì. Tìm đủ <b>3 dấu hiệu đáng ngờ</b> rồi chọn cách xử lý.',
+    from: H('dom','GHN Express &lt;delivery@ghn-express-vn.xyz&gt;'),
+    to: 'ban@email.com',
+    subject: 'Kiện hàng #VN882041 chưa thể giao: cần thanh toán phí',
+    body: [
+      'Xin chào ' + H('name','Nguyễn An') + ',',
+      'Kiện hàng ' + H('ord','#VN882041') + ' đang giữ tại kho. ' + H('unk','Người gửi: ẩn danh. Nội dung: “quà tặng từ người quen”.'),
+      H('link','THANH TOÁN 15.000đ PHÍ GIAO','btn-fake'),
+      H('ddl','Nếu không thanh toán trong 24 giờ, kiện hàng sẽ bị hoàn về và hủy.')
+    ],
+    need: 3,
+    clues: {
+      dom: [1,'Tên miền lạ','Đuôi <b>.xyz</b> và tên miền không thuộc hãng vận chuyển. Hãng thật dùng tên miền chính thức của họ.'],
+      unk: [1,'Không rõ người gửi','Đơn hàng bạn không đặt, người gửi ẩn danh. Kẻ gian dùng sự tò mò để dụ bạn bấm.'],
+      link: [1,'Đòi trả phí qua liên kết','Liên kết thực sự trỏ tới <b>http://ghn-nhanhang.top/pay</b>, trang thu thập số thẻ và mã OTP. Phí nhỏ chỉ là cái cớ.'],
+      ddl: [1,'Hạn 24 giờ','Hạn chót khiến bạn không kịp kiểm tra đơn hàng.'],
+      name: [0,'Có tên bạn','Tên bạn xuất hiện nhưng thông tin này kẻ gian dễ có từ dữ liệu bị rò rỉ, nên không chứng minh thư là thật.'],
+      ord: [0,'Mã vận đơn','Mã nhìn rất thật nhưng ai cũng có thể bịa ra một dãy số.']
+    },
+    opts: [
+      { t:'Thanh toán 15.000đ vì số tiền nhỏ', why:'Trang thanh toán giả sẽ lấy số thẻ và OTP của bạn. Số tiền nhỏ chỉ là cái cớ.' },
+      { t:'Bấm vào liên kết chỉ để xem thử, không nhập gì', why:'Chỉ mở liên kết cũng có thể dẫn tới trang độc hại hoặc xác nhận email của bạn đang hoạt động.' },
+      { t:'Tự mở app mua sắm hoặc hãng vận chuyển chính thức để kiểm tra đơn. Nếu không có đơn thì xóa thư', ok:1 },
+      { t:'Trả lời “STOP” để ngừng nhận thư', why:'Thư lừa đảo không có cơ chế hủy thật. Trả lời chỉ xác nhận tài khoản của bạn còn hoạt động.' }
+    ],
+    hint: [
+      'Hãy tự hỏi: bạn có đặt hàng không, người gửi là ai, và vì sao phải trả tiền qua một liên kết?',
+      'Cách an toàn nhất là kiểm tra đơn hàng ở kênh bạn tự mở, không đi qua liên kết trong thư.'
+    ],
+    done: {
+      title: 'CASE 2 CLEARED',
+      html: () => `<p>Đây là thư <b>giả mạo giao hàng</b>:</p><ul><li><b>Đơn hàng bạn không đặt</b>, người gửi ẩn danh.</li><li><b>Đòi phí nhỏ qua liên kết</b> để lấy thông tin thẻ.</li><li><b>Hạn 24 giờ</b> tạo áp lực phải làm ngay.</li></ul><p><b>Ghi nhớ:</b> có tên bạn hay mã vận đơn trong thư không có nghĩa là thật. Hãy kiểm tra trong app chính thức.</p>`
+    }
+  },
+  {
+    prompt: 'Một email từ <b>thầy hiệu trưởng</b> nhờ bạn việc gấp. Email thật của trường có đuôi <b>@thptcyberverse.edu.vn</b>. Tìm đủ <b>3 dấu hiệu đáng ngờ</b> rồi chọn cách xử lý.',
+    from: H('dom','Thầy Nguyễn Văn Long (Hiệu trưởng) &lt;hieutruong.nvlong@gmail.com&gt;'),
+    to: 'ban@email.com',
+    subject: 'Nhờ em một việc gấp, đừng nói với ai',
+    body: [
+      H('greet','Chào em,') + ' thầy đang họp nên ' + H('nocall','không thể gọi điện') + ', em nhắn lại qua email giúp thầy.',
+      'Thầy cần mua ' + H('gift','5 thẻ quà tặng, mỗi thẻ 500.000đ') + ' cho đoàn khách. Em ứng trước, chụp mã thẻ gửi lại, ' + H('secret','thầy hoàn tiền ngay chiều nay, đừng nói với ai.'),
+      'Cảm ơn em. ' + H('sig','Nguyễn Văn Long · Hiệu trưởng THPT Cyberverse')
+    ],
+    need: 3,
+    clues: {
+      dom: [1,'Email cá nhân, không phải của trường','Địa chỉ là <b>@gmail.com</b>, không phải <b>@thptcyberverse.edu.vn</b>. Tên hiển thị có thể ghi bất cứ gì.'],
+      nocall: [1,'Ngăn bạn xác minh','Nói “không thể gọi điện” để bạn không thể kiểm tra qua kênh khác.'],
+      gift: [1,'Đòi mã thẻ quà tặng','Mã thẻ gửi đi gần như không thể thu hồi, nên đây là cách thu tiền quen thuộc của kẻ lừa đảo.'],
+      secret: [1,'Gấp và giữ bí mật','“Đừng nói với ai” nhằm cô lập bạn khỏi những người có thể phát hiện ra.'],
+      greet: [0,'Giọng thân mật','Giọng điệu thân mật dễ bắt chước, nên không chứng minh gì.'],
+      sig: [0,'Chữ ký có tên trường','Chữ ký chỉ là chữ, ai cũng có thể sao chép.']
+    },
+    opts: [
+      { t:'Mua thẻ và gửi mã vì đây là yêu cầu của thầy', why:'Đây là chiêu giả mạo lãnh đạo. Mã thẻ đã gửi gần như không thể lấy lại.' },
+      { t:'Trả lời email hỏi lại thầy xem có đúng không', why:'Thư trả lời sẽ về hộp thư của kẻ giả mạo, và hắn sẽ khẳng định mình là thầy thật.' },
+      { t:'Liên hệ thầy hoặc văn phòng trường bằng số điện thoại đã biết hoặc gặp trực tiếp, đồng thời báo cho nhà trường', ok:1 },
+      { t:'Nhờ bạn cùng lớp góp tiền mua thẻ cho nhanh', why:'Làm vậy chỉ kéo thêm người bị mất tiền.' }
+    ],
+    hint: [
+      'So sánh đuôi email với địa chỉ thật của trường và xem thư đang yêu cầu gì, ngăn bạn làm gì.',
+      'Xác minh bằng một kênh độc lập bạn đã biết từ trước, không phải bằng cách trả lời thư.'
+    ],
+    done: {
+      title: 'CASE 3 CLEARED',
+      html: () => `<p>Đây là thư <b>giả mạo người có thẩm quyền</b>:</p><ul><li><b>Email cá nhân</b> thay vì email chính thức của trường.</li><li><b>Không cho gọi điện</b>, <b>giữ bí mật</b> và <b>đòi mã thẻ quà tặng</b>.</li></ul><p><b>Ghi nhớ:</b> yêu cầu tiền bạc “gấp và bí mật” luôn cần được xác minh trực tiếp, kể cả khi người gửi là thầy cô hay sếp.</p>`
+    }
+  },
+  {
+    prompt: 'Thư báo bạn <b>trúng học bổng</b> kèm tệp đính kèm, dù bạn chưa từng đăng ký. Tìm đủ <b>3 dấu hiệu đáng ngờ</b> rồi chọn cách xử lý.',
+    from: H('dom','Quỹ Học bổng Tương Lai &lt;hocbong@quytuonglai-vn.top&gt;'),
+    to: 'ban@email.com',
+    subject: 'Chúc mừng! Bạn trúng học bổng 50.000.000đ',
+    body: [
+      'Chúc mừng! Bạn đã được chọn, ' + H('noapply','dù bạn chưa nộp hồ sơ nào.'),
+      'Mở tệp để nhận thưởng: ' + H('file','HocBong_2026.pdf.exe','btn-fake'),
+      H('macro','Nếu có cảnh báo, hãy tắt phần mềm diệt virus và bấm “Enable Content”.'),
+      H('addr','Quỹ Học bổng Tương Lai · 12 Nguyễn Huệ · MST 0312345678')
+    ],
+    need: 3,
+    clues: {
+      dom: [1,'Tên miền lạ','Đuôi <b>.top</b> và tên miền không thuộc quỹ nào có thông tin kiểm chứng được.'],
+      noapply: [1,'Trúng thưởng dù không đăng ký','Phần thưởng lớn bất ngờ là mồi nhử để bạn mở tệp.'],
+      file: [1,'Đuôi tệp giả','Tên “.pdf.exe” giấu đuôi <b>.exe</b>, một chương trình chạy được trên máy, không phải tài liệu PDF.'],
+      macro: [1,'Bảo tắt diệt virus','Không tổ chức thật nào yêu cầu bạn tắt phần mềm bảo vệ. Đây là cách cài mã độc.'],
+      addr: [0,'Địa chỉ và mã số thuế','Địa chỉ và mã số thuế chỉ là chữ, kẻ gian có thể sao chép từ một tổ chức thật.']
+    },
+    opts: [
+      { t:'Mở tệp để xem thử, tắt diệt virus theo hướng dẫn', why:'Đây chính là cách cài mã độc. Không bao giờ tắt phần mềm bảo vệ theo yêu cầu từ email.' },
+      { t:'Mở tệp trên máy tính cũ ở nhà để đỡ rủi ro', why:'Mã độc vẫn lấy được dữ liệu trên máy đó và có thể lây sang các thiết bị trong cùng mạng.' },
+      { t:'Không mở tệp. Báo giáo viên hoặc bộ phận IT và tra cứu học bổng trên website chính thức của quỹ', ok:1 },
+      { t:'Gửi tệp cho bạn thân nhờ mở thử', why:'Bạn sẽ đưa mã độc cho người khác. Hãy báo cáo thay vì chia sẻ.' }
+    ],
+    hint: [
+      'Nhìn kỹ tên tệp đính kèm và những gì thư yêu cầu bạn làm với máy tính.',
+      'Đừng mở tệp lạ trên bất kỳ máy nào. Hãy hỏi người có chuyên môn và tự tra cứu thông tin ở nguồn chính thức.'
+    ],
+    done: {
+      title: 'CASE 4 CLEARED',
+      html: () => `<p>Đây là thư <b>phát tán mã độc</b>:</p><ul><li><b>Trúng thưởng không đăng ký</b>, mồi nhử hấp dẫn.</li><li><b>Tệp “.pdf.exe”</b> thực chất là chương trình chạy trên máy.</li><li><b>Yêu cầu tắt diệt virus</b> để mã độc không bị chặn.</li></ul><p><b>Ghi nhớ:</b> chỉ mở tệp từ nguồn bạn tin cậy và luôn kiểm tra đuôi tệp thật.</p>`
+    }
+  }
+];
+
+LEVELS.push({
+  code: 'LEVEL 02',
+  name: 'PHISHING STORM',
+  key: 'SECURITY KEY 02',
+  max: 500,
+  time: 600,
+  totalSteps: CASES_LV2.length,
+  alertTitle: 'SYSTEM ALERT',
+  alert: [
+    '<b>Phishing storm detected.</b>',
+    'Malicious emails are flooding the Mail Gateway.',
+    'Your mission: Analyze 4 suspicious emails, find the red flags and choose the safe response.'
+  ],
+  hint: step => CASES_LV2[L.c]?.hint[step] || CASES_LV2[L.c]?.hint[0],
+  start(st) {
+    L.c = 0;
+    const run = () => {
+      const C = CASES_LV2[L.c];
+      L.step = L.c;
+      L.subStep = 0;
+      L.found = new Set();
+      L.opts = shuffle(C.opts);
+      st.innerHTML = `
+        <div class="prompt"><b>CASE ${L.c+1}/${CASES_LV2.length}</b> · ${C.prompt}</div>
+        <div class="mail-wrap">
+          <div class="mail">
+            <div class="mail-bar"><i></i><i></i><i></i>&nbsp;INBOX · THƯ MỚI</div>
+            <div class="mail-head">
+              <div>Từ: ${C.from}</div>
+              <div>Đến: ${C.to}</div>
+              <div>Chủ đề: <b style="font-weight:400;color:var(--bright)">${C.subject}</b></div>
+            </div>
+            <div class="mail-body">${C.body.map(p => `<div>${p}</div>`).join('')}</div>
+          </div>
+          <aside class="panel" style="margin-top:0">
+            <h3>Phân tích thư</h3>
+            <div id="cnt" class="small">Dấu hiệu đã tìm: 0/${C.need}</div>
+            <div id="info" class="info">Bấm vào các chi tiết gạch vàng để kiểm tra.</div>
+            <div id="chips"></div>
+          </aside>
+        </div>
+        <div id="act" class="panel" hidden>
+          <h3>Bạn sẽ xử lý thế nào?</h3>
+          <div id="opts">${L.opts.map((o, i) => `<button class="opt" data-i="${i}">${o.t}</button>`).join('')}</div>
+        </div>`;
+      st.scrollTop = 0;
+      $('#stage').parentElement.scrollTop = 0;
+      hud();
+    };
+    
+    st.onkeydown = e => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('hot')) {
+        e.preventDefault(); e.target.click();
+      }
+    };
+    
+    st.onclick = e => {
+      const C = CASES_LV2[L.c];
+      const h = e.target.closest('.hot');
+      const o = e.target.closest('.opt');
+      if (h) {
+        sfx.click();
+        const k = h.dataset.k, c = C.clues[k];
+        if (c) {
+          $('#info').innerHTML = `<b>${c[1]}</b>${c[0] ? '' : ' · <span style="color:var(--meta)">không phải dấu hiệu</span>'}<br>${c[2]}`;
+          if (c[0] && !L.found.has(k)) {
+            L.found.add(k);
+            h.classList.add('found');
+            sfx.ok();
+            $('#chips').insertAdjacentHTML('beforeend', `<span class="chip">${c[1]}</span>`);
+            $('#cnt').textContent = `Dấu hiệu đã tìm: ${L.found.size}/${C.need}`;
+            if (L.found.size >= C.need && L.subStep === 0) {
+              L.subStep = 1;
+              $('#act').hidden = false;
+              toast('Đủ bằng chứng. Hãy chọn cách xử lý');
+              $('#act').scrollIntoView({ behavior: 'smooth' });
+            }
+          }
+        }
+      }
+      if (o && L.subStep === 1) {
+        sfx.click();
+        const p = L.opts[+o.dataset.i];
+        if (!p.ok) return api.wrong(p.why);
+        if (L.c === CASES_LV2.length - 1) {
+          L.step = CASES_LV2.length;
+          return api.done(C.done.title, C.done.html());
+        }
+        sfx.ok();
+        modal({
+          cls: 'ok',
+          title: C.done.title,
+          sub: `CASE ${L.c+1}/${CASES_LV2.length} · tiếp tục để mở khóa Security Key`,
+          html: C.done.html(),
+          buttons: [{
+            label: 'NEXT CASE',
+            fn: () => { L.c++; run(); }
+          }]
+        });
+      }
+    };
+    run();
+  }
+});
+
+/* --------------------------------------------------------------------------
+   SESSION BANK DÙNG CHO CẢ LEVEL 3 VÀ LEVEL 4 (Từ file gốc lv3 & lv4)
+   -------------------------------------------------------------------------- */
+const SCN = [
+  { id:'phish', title:'Email lừa đảo', m1:'VERIFY THE SOURCE', w2:'PHISH', m3:'REPORT SUSPICIOUS EMAILS', a:'mail_admin', d:'Hồ sơ nhân sự',
+    sit:'Hộp thư của Trung tâm điều hành nhận hàng loạt email giả danh bộ phận IT, yêu cầu nhân viên "xác nhận tài khoản" ngay.',
+    intro:'Một email lừa đảo đã lọt qua và gây ra nhiều sự cố cùng lúc.', c1:'Bấm vào email giả mạo bộ phận IT', c3:'Dùng thông tin đăng nhập bị lộ qua email giả',
+    bad:['Mở thử tệp đính kèm trong email lạ để kiểm tra','Mở tệp lạ có thể cài mã độc; hãy báo cáo và để bộ phận an ninh phân tích.'],
+    lesson:'luôn kiểm chứng nguồn gửi và báo cáo email đáng ngờ thay vì bấm hay mở tệp.' },
+  { id:'pass', title:'Bảo vệ tài khoản cá nhân', m1:'USE STRONG PASSWORDS', w2:'LOGIN', m3:'ENABLE TWO FACTOR', a:'admin_ops', d:'Dữ liệu khách hàng',
+    sit:'Hệ thống ghi nhận nhiều tài khoản dùng mật khẩu yếu và bị thử đăng nhập liên tục.',
+    intro:'Mật khẩu yếu đã bị dò ra và kéo theo nhiều sự cố.', c1:'Mật khẩu yếu bị dò liên tục', c3:'Đăng nhập bằng mật khẩu bị đoán ra',
+    bad:['Đặt lại mọi mật khẩu thành 123456 cho dễ nhớ','Mật khẩu đơn giản rất dễ bị đoán, làm tăng nguy cơ bị chiếm tài khoản.'],
+    lesson:'dùng mật khẩu mạnh, không trùng lặp và bật xác thực hai lớp.' },
+  { id:'link', title:'Liên kết độc hại', m1:'AVOID UNKNOWN LINKS', w2:'CLICK', m3:'CHECK BEFORE YOU CLICK', a:'staff_21', d:'Tài liệu nội bộ',
+    sit:'Một liên kết rút gọn lạ được chia sẻ trong kênh nội bộ và dẫn tới trang đăng nhập giả.',
+    intro:'Một liên kết độc hại đã được bấm và gây ra nhiều sự cố.', c1:'Bấm vào liên kết rút gọn không rõ nguồn', c3:'Máy trạm tải tệp từ trang web giả mạo',
+    bad:['Bấm thử liên kết để xem trang web trông thế nào','Bấm liên kết lạ có thể đưa bạn tới trang giả mạo hoặc tải mã độc; hãy kiểm tra địa chỉ và báo cáo.'],
+    lesson:'không bấm liên kết lạ; kiểm tra địa chỉ trước khi truy cập.' },
+  { id:'backup', title:'Bảo vệ dữ liệu quan trọng', m1:'BACKUP YOUR DATA', w2:'RESTORE', m3:'TEST YOUR BACKUPS', a:'backup_svc', d:'Dữ liệu tài chính',
+    sit:'Một ổ đĩa chứa dữ liệu quan trọng sắp hỏng, trong khi lịch sao lưu đã bị bỏ dở nhiều tuần.',
+    intro:'Ổ đĩa hỏng và lịch sao lưu bị bỏ dở gây ra nhiều sự cố.', c1:'Tài khoản dịch vụ sao lưu dùng trên thiết bị lạ', c3:'Tiến trình lạ truy cập kho sao lưu',
+    bad:['Chỉ giữ một bản sao duy nhất trên cùng ổ đĩa','Bản sao nằm cùng thiết bị sẽ mất cùng lúc khi ổ đĩa hỏng; cần nhiều bản ở nơi khác nhau.'],
+    lesson:'sao lưu đều đặn, lưu ở nơi khác và thử khôi phục định kỳ.' },
+  { id:'patch', title:'Cập nhật phần mềm', m1:'UPDATE YOUR SOFTWARE', w2:'PATCH', m3:'INSTALL SECURITY UPDATES', a:'sysadmin_03', d:'Nhật ký giao dịch',
+    sit:'Một máy chủ chưa cập nhật bản vá bảo mật đang bị quét lỗ hổng từ bên ngoài.',
+    intro:'Lỗ hổng chưa vá đã bị khai thác và gây ra nhiều sự cố.', c1:'Khai thác lỗ hổng trên phần mềm chưa vá', c3:'Quét lỗ hổng từ địa chỉ lạ',
+    bad:['Hoãn cập nhật vì sợ gián đoạn công việc','Chậm vá lỗi cho phép kẻ tấn công khai thác lỗ hổng đã biết; nên lên lịch cập nhật có kiểm soát.'],
+    lesson:'cập nhật bản vá bảo mật kịp thời để đóng các lỗ hổng đã biết.' },
+  { id:'otp', title:'Mạo danh quản trị viên', m1:'NEVER SHARE YOUR OTP', w2:'SCAM', m3:'VERIFY BEFORE YOU TRUST', a:'finance_05', d:'Sổ cái kế toán',
+    sit:'Một người tự xưng là quản trị viên gọi điện, yêu cầu nhân viên đọc mã OTP để "khắc phục sự cố".',
+    intro:'Mã OTP bị lừa lấy và gây ra nhiều sự cố cùng lúc.', c1:'Mã OTP bị đọc cho người lạ qua điện thoại', c3:'Đăng nhập bằng mã OTP bị lừa lấy',
+    bad:['Đọc mã OTP cho người xưng là quản trị viên','Không bao giờ chia sẻ OTP; quản trị viên thật không yêu cầu mã này.'],
+    lesson:'không chia sẻ OTP và xác minh người liên hệ qua kênh chính thức.' }
+];
+
+function rng(s) {
+  return () => {
+    s |= 0; s = s + 0x6D2B79F5 | 0;
+    let t = Math.imul(s ^ s >>> 15, 1 | s);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function shuf(a, r) {
+  a = a.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+let G_SC = null, G_CH = null, G_INC = null, G_FD = null, G_SHIFT = 3;
+function initSharedSession() {
+  const sc = SCN[0]; // Mặc định kịch bản phish hấp dẫn và điển hình nhất
+  const r = rng(1234567);
+  G_SC = sc;
+  const sh = 3; // Shift chuẩn
+  G_SHIFT = sh;
+  const bits = w => w.split('').map(ch => ch.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+  const c0 = sc.w2.charCodeAt(0);
+  const b0 = bits(sc.w2).split(' ');
+  let e2; do { e2 = shuf(b0, r).join(' '); } while (e2 === b0.join(' ') && b0.length > 1);
+  
+  G_CH = [
+    { id:'c1', name:'CAESAR CIPHER', xp:300, enc:caesar(sc.m1, -sh), ans:sc.m1,
+      hint:'Bảng chữ cái đã bị dịch chuyển một số vị trí bất kỳ. Hãy thử lần lượt từng độ dịch từ 1 đến 25 và xem phần giải mã có chứa thành từ tiếng Anh có nghĩa không.',
+      edu:'Caesar Cipher là phương pháp mã hóa thay thế: mỗi chữ cái được dịch chuyển một số vị trí cố định trong bảng chữ cái (ở đây Shift = '+sh+'). Đây chỉ là phương pháp học tập, KHÔNG đủ an toàn để bảo vệ dữ liệu hiện đại vì chỉ có 25 khóa để thử.' },
+    { id:'c2', name:'THÔNG ĐIỆP NHỊ PHÂN', xp:300, enc:e2, ans:sc.w2,
+      hint:'Máy tính biểu diễn ký tự bằng mã nhị phân. Mỗi nhóm 8 bit là một số 0–255 (mã ASCII); ví dụ 01000001 = 65 = "A".',
+      edu:'Máy tính biểu diễn dữ liệu bằng hai trạng thái 0 và 1 (bit). 8 bit tạo thành 1 byte, có thể là một số từ 0–255; theo bảng ASCII, số đó tương ứng một ký tự ('+c0+' = '+sc.w2[0]+'). Binary/ASCII là cách biểu diễn dữ liệu, không phải phương pháp bảo mật.' },
+    { id:'c3', name:'GIẢI MÃ CUỐI CÙNG', xp:400, enc:caesar(sc.m3, -sh), ans:sc.m3,
+      hint:'Đôi khi độ dịch đơn giản nhất lại là chìa khóa. Bạn đã gặp một Shift rất quen ở Challenge 1.',
+      edu:'Mã hóa giúp bảo vệ tính bảo mật của thông tin bằng cách chuyển dữ liệu thành dạng khó đọc nếu không có phương pháp hoặc khóa giải mã phù hợp. Thực tế hiện nay dùng các thuật toán mạnh như AES, không dùng Caesar.' }
+  ];
+  
+  const A = sc.a, D = sc.d;
+  const T = [
+    { id:'i1', name:'TÀI KHOẢN BỊ XÂM NHẬP', alert:'CẢNH BÁO: PHÁT HIỆN ĐĂNG NHẬP BẤT THƯỜNG\n\nTài khoản: '+A+'\nThiết bị: Thiết bị lạ\nVị trí: Không xác định\nNghi vấn: '+sc.c1+'\nTrạng thái: Có thể đã bị chiếm quyền', done:'TÀI KHOẢN ĐÃ AN TOÀN',
+      hint:'Hãy chọn cách vừa chặn truy cập đáng ngờ, vừa xác minh người dùng thật, không làm lộ thông tin.',
+      right:['Tạm thời khóa tài khoản '+A+', sau đó xác minh danh tính qua một kênh độc lập đáng tin cậy.','Khóa tạm thời ngăn truy cập trái phép ngay lập tức; xác minh qua kênh độc lập (ví dụ gọi điện số đã đăng ký) đảm bảo đúng người dùng thật.'],
+      wrong:[['Khoanh vùng cảnh báo như một báo nhiễu quen thuộc, chưa cần khóa tài khoản '+A+' ngay lúc này.','Bỏ qua cảnh báo cho phép kẻ tấn công tiếp tục truy cập. Mọi dấu hiệu bất thường cần được xử lý.'],
+             ['Gửi cho quản trị viên toàn bộ mật khẩu hiện tại của tài khoản '+A+' qua tin nhắn nội bộ để được xử lý gấp.','Không bao giờ chia sẻ mật khẩu qua tin nhắn: kênh này có thể bị đọc lén, và quản trị viên hợp lệ không cần mật khẩu của bạn.'],
+             ['Xóa nhanh dữ liệu và lịch sử phiên của tài khoản '+A+' trên máy chủ để ngăn truy cập ngay.','Xóa dữ liệu gây mất mát không cần thiết và làm mất bằng chứng điều tra.']], fx:{h:10,s:25,n:20} },
+    { id:'i2', name:'MẤT DỮ LIỆU', alert:'CẢNH BÁO: DỮ LIỆU KHÔNG CÒN TOÀN VẸN\n\nCơ sở dữ liệu chính ('+D+'): Bị hỏng\nBản sao lưu (Backup) tin cậy: Sẵn sàng\nBản sao lưu không rõ nguồn gốc: Đã phát hiện', done:'ĐÃ KHÔI PHỤC DỮ LIỆU',
+      hint:'Nguồn dữ liệu khôi phục phải đáng tin cậy và được kiểm tra sau khi khôi phục.',
+      right:['Khôi phục '+D+' từ bản backup đáng tin cậy đã được xác minh và kiểm tra tính toàn vẹn dữ liệu.','Backup đáng tin cậy giúp phục hồi dữ liệu; kiểm tra toàn vẹn (ví dụ so sánh mã băm) xác nhận dữ liệu không bị sai lệch.'],
+      wrong:[['Khôi phục '+D+' càng nhanh càng tốt từ bản sao lưu chưa rõ nguồn gốc lấy từ máy cá nhân của một nhân viên.','Backup không rõ nguồn gốc có thể bị giả mạo hoặc chứa mã độc, làm hệ thống mất an toàn hơn.'],
+             ['Để dứt điểm lỗi: xóa toàn bộ hệ thống cùng các dịch vụ đang chạy, dựng lại từ đầu cho chắc.','Xóa toàn bộ hệ thống làm mất luôn dữ liệu còn lại và gây gián đoạn nghiêm trọng.'],
+             ['Giữ '+D+' vận hành bình thường để người dùng không bị gián đoạn, dữ liệu hỏng xử lý dần sau.','Tiếp tục với dữ liệu hỏng làm sai kết quả và lỗi lan rộng.']], fx:{h:10,i:35,n:15} },
+    { id:'i3', name:'XÂM NHẬP TRÁI PHÉP', alert:'CẢNH BÁO: TRUY CẬP TRÁI PHÉP\n\nThành phần bị ảnh hưởng: NODE-04\nTruy cập trái phép: Đã phát hiện\nNghi vấn: '+sc.c3+'\nNhật ký hệ thống (Log): Còn nguyên vẹn', done:'ĐÃ NGĂN CHẶN XÂM NHẬP',
+      hint:'Ứng phó sự cố tốt cần bảo toàn bằng chứng và báo cho người có trách nhiệm.',
+      right:['Ghi nhận cảnh báo, cô lập thành phần bị ảnh hưởng khi cần thiết, bảo toàn log và thông báo cho người có trách nhiệm.','Cô lập có kiểm soát hạn chế lan rộng, log giúp đánh giá phạm vi, báo cáo đúng người để xử lý theo quy trình.'],
+      wrong:[['Xóa toàn bộ nhật ký hệ thống để tránh lộ thông tin và giảm nguy cơ bị khai thác sâu hơn.','Log là bằng chứng để biết điều gì đã xảy ra. Xóa log che giấu dấu vết và cản trở điều tra.'],
+             ['Ngắt điện toàn bộ hệ thống ngay lập tức, kể cả các dịch vụ trọng yếu khác, để chắc chắn chặn đứt mọi kết nối vừa phát hiện ra.','Tắt tất cả khi chưa đánh giá gây gián đoạn lớn và có thể mất dữ liệu trong bộ nhớ.'],
+             ['Hệ thống vẫn chạy bình thường và chưa có thiệt hại rõ ràng, đang trong phiên người dùng cao điểm nên khoan can thiệp.','Hệ thống vẫn chạy không có nghĩa là an toàn; kẻ tấn công có thể đang hoạt động âm thầm.']], fx:{h:15,s:25,n:35} }
+  ];
+  G_INC = T.map(t => {
+    const o = shuf([t.right.concat(1)].concat(t.wrong.map(w => w.concat(0))), r);
+    return { id:t.id, name:t.name, alert:t.alert, done:t.done, hint:t.hint, fx:t.fx, ok:o.findIndex(x => x[2]), opts:o.map(x => x[0]), why:o.map(x => x[1]) };
+  });
+  
+  const gen = [['Chia sẻ mật khẩu quản trị cho cả nhóm cho nhanh','Làm tăng nguy cơ lộ thông tin đăng nhập.'],['Xóa log cũ cho hệ thống nhẹ hơn để đỡ tốn bộ nhớ.','Mất bằng chứng điều tra sự cố.']][0];
+  G_FD = {
+    id:'fd', hint:'Cần đủ 4 biện pháp: tài khoản, khôi phục từ backup tin cậy, kiểm tra toàn vẹn, giám sát + lưu log. Tránh các biện pháp rủi ro.',
+    opts: shuf([
+      ['Bảo vệ tài khoản và xác thực người dùng', 1, 'Identity Core: ngăn kẻ tấn công quay lại bằng tài khoản bị chiếm.', 0],
+      ['Khôi phục dữ liệu từ bản backup đáng tin cậy', 1, 'Backup System: đưa dữ liệu về trạng thái sạch, đã biết.', 1],
+      ['Kiểm tra tính toàn vẹn của dữ liệu sau khôi phục', 1, 'Encryption Core: xác nhận dữ liệu không bị thay đổi trái phép.', 2],
+      ['Tiếp tục giám sát hệ thống và lưu trữ nhật ký sự cố', 1, 'Firewall: phát hiện sớm tái diễn và giữ bằng chứng.', 3],
+      [gen[0], 0, gen[1], -1],
+      [sc.bad[0], 0, sc.bad[1], -1]
+    ], r)
+  };
+}
+initSharedSession();
+
+/* --------------------------------------------------------------------------
+   LEVEL 3: ENCRYPTION CORE (Từ file gốc lv3.html)
+   -------------------------------------------------------------------------- */
+const AB = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+let lv3Shift = 1, binDecoded = [], lastBit = -1;
+
+const stripCells = (sh, set) => (AB + AB + AB).split('').map((ch, k) => {
+  const p = ((k - (26 - sh)) % 26 + 26) % 26;
+  return `<i class="${set.has(AB[p]) ? 'hl' : ''}">${ch}</i>`;
+}).join('');
+const stripX = sh => `translateX(-${((26 - sh) / 78 * 100)}%)`;
+const labCap = c => {
+  const f = c.enc[0];
+  return `Ví dụ: chữ <b>${f}</b> đầu thông điệp được giải mã thành <b>${caesar(f, lv3Shift)}</b> (lùi ${lv3Shift} vị trí).`;
+};
+const arc = (a0, a1, r) => {
+  const p = a => [80 + r * Math.cos(a * Math.PI / 180), 80 + r * Math.sin(a * Math.PI / 180)].map(v => v.toFixed(1));
+  const [x0, y0] = p(a0), [x1, y1] = p(a1);
+  return `M${x0} ${y0} A${r} ${r} 0 0 1 ${x1} ${y1}`;
+};
+
+function aux3HTML(step) {
+  const c = G_CH[step];
+  let lab;
+  if (c.id === 'c2') {
+    const g = lastBit >= 0 ? c.enc.split(' ')[lastBit] : null;
+    lab = g ? `
+      <p class="small">Nhóm ${lastBit + 1}: mỗi bit bằng 1 cộng thêm giá trị của vị trí đó.</p>
+      <div class="wt">${g.split('').map((b, i) => `<div class="${b === '1' ? 'on' : ''}"><small>${128 >> i}</small>${b}</div>`).join('')}</div>
+      <p>${g.split('').map((b, i) => b === '1' ? 128 >> i : null).filter(Boolean).join(' + ')} = <b>${parseInt(g, 2)}</b> → ký tự ASCII <b>${String.fromCharCode(parseInt(g, 2))}</b></p>
+    ` : `<p class="small">Thử thách này dùng mã ASCII, không dùng Shift. Hãy bấm vào một nhóm 8 bit để xem cách tính giá trị của nó.</p>`;
+  } else {
+    const set = new Set(c.enc.replace(/[^A-Z]/g, '').split(''));
+    lab = `
+      <div class="scr">
+        <div class="lrow"><span>Chữ trong thông điệp mã hóa</span><div class="top">${AB.split('').map(ch => `<i class="${set.has(ch) ? 'hl' : ''}">${ch}</i>`).join('')}</div></div>
+        <div class="lrow"><span>Chữ sau khi giải mã (Shift = <b>${lv3Shift}</b>)</span><div class="win"><div class="strip" id="strip" style="transform:${stripX(lv3Shift)}">${stripCells(lv3Shift, set)}</div></div></div>
+      </div>
+      <p id="labcap">${labCap(c)}</p>`;
+  }
+  
+  const rows = G_CH.map((x, i) => {
+    const d = i < L.step;
+    const cur = i === L.step;
+    return `
+      <div class="lg ${d ? 'd' : ''}">
+        <span class="tag">[0${i+1}] ${x.name}</span>
+        <span class="st">${d ? 'COMPLETED' : 'PENDING'}</span>
+        <span class="dt">${d || cur ? 'Đầu vào: ' + x.enc : 'Đầu vào: chưa nhận'}${d ? ' → Kết quả: <b>' + x.ans + '</b> · +' + x.xp + ' XP' : ''}</span>
+      </div>`;
+  }).join('');
+  
+  const n = L.step, all = n === 3;
+  const col = k => k < n ? 'var(--live)' : 'var(--hair2)';
+  const core = `
+    <svg viewBox="0 0 160 160" width="160" height="160" role="img" aria-label="Encryption Core: ${n}/3 phần đã kích hoạt" class="${all ? 'rest' : ''}">
+      ${[0, 1, 2].map(i => `<path d="${arc(-90 + i * 120 + 10, -90 + i * 120 + 110, 58)}" stroke="${col(i)}" stroke-width="12" fill="none" stroke-linecap="round" style="transition:stroke .5s"/>`).join('')}
+      <circle cx="80" cy="80" r="30" fill="${all ? 'var(--live)' : 'var(--panel)'}" stroke="var(--hair2)" style="transition:fill .6s"/>
+      <text x="80" y="87" text-anchor="middle" font-size="20" font-family="var(--mono)" fill="${all ? '#0a0a0a' : '#f2f2f2'}">${n}/3</text>
+    </svg>`;
+    
+  return `
+    <div class="panel"><h3>ENCRYPTION LAB – Phòng thí nghiệm mã hóa</h3>${lab}</div>
+    <div class="g2b">
+      <div class="panel"><h3>TRANSMISSION LOG – Nhật ký giải mã</h3>${rows}</div>
+      <div class="panel corep">
+        <h3>CORE STATUS – Trạng thái lõi</h3>
+        ${core}
+        <p><b style="color:${all ? 'var(--live)' : 'var(--bright)'}">${all ? 'RESTORED' : n ? 'ĐANG KÍCH HOẠT ' + n + '/3' : 'OFFLINE'}</b></p>
+        <p class="small">Phần 1 Caesar: ${n >= 1 ? 'ACTIVE' : 'OFFLINE'} · Phần 2 Binary: ${n >= 2 ? 'ACTIVE' : 'OFFLINE'} · Phần 3 Giải mã cuối: ${n >= 3 ? 'ACTIVE' : 'OFFLINE'}</p>
+      </div>
+    </div>`;
+}
+
+LEVELS.push({
+  code: 'LEVEL 03',
+  name: 'ENCRYPTION CORE',
+  key: 'SECURITY KEY 03',
+  max: 1000,
+  time: 480,
+  totalSteps: 3,
+  alertTitle: 'ENCRYPTION CORE LOCKED',
+  alert: [
+    '<b>Critical: Kênh liên lạc CYBERVERSE đã bị mã hóa.</b>',
+    'Các thông điệp quan trọng đang bị biến đổi thành mật mã Caesar và chuỗi nhị phân (Binary).',
+    'Nhiệm vụ: Giải mã 3 thông điệp để khôi phục hoàn toàn Encryption Core.'
+  ],
+  hint: step => G_CH[L.step]?.hint || 'Điều chỉnh Shift hoặc bấm giải mã nhị phân.',
+  start(st) {
+    L.step = 0;
+    binDecoded = [];
+    lastBit = -1;
+    lv3Shift = 1;
+    
+    const render = () => {
+      const c = G_CH[L.step];
+      hud();
+      let mainHtml = `
+        <div class="prompt"><b>ENCRYPTION CORE – Thử thách ${L.step + 1}/3: ${c.name}</b><br><b>Tình huống – ${G_SC.title}:</b> ${G_SC.sit}</div>
+        <div class="panel">
+          <h2>${c.name}</h2>
+          <p class="small">${L.step === 0 ? 'Hệ thống phát hiện một thông điệp bị mã hóa (Encryption). Hãy giải mã để khôi phục liên lạc.' : L.step === 2 ? 'Thông điệp mã hóa cuối cùng' : 'Tín hiệu nhị phân (Binary) nhận được'}</p>`;
+          
+      if (c.id === 'c2') {
+        mainHtml += `
+          <p class="small">Thứ tự các nhóm 8 bit đã bị xáo trộn. Bấm vào từng nhóm để giải mã; sau đó tự sắp xếp các ký tự đã giải mã thành thông điệp có nghĩa. Bấm GIẢI MÃ TẤT CẢ để giải mã tất cả.</p>
+          <div class="chips">
+            ${c.enc.split(' ').map((b, i) => `
+              <div class="bin-chip ${binDecoded[i] ? 'done' : ''}" data-idx="${i}" tabindex="0" role="button">
+                ${b}<br>${binDecoded[i] ? parseInt(b, 2) + ' → <b>' + String.fromCharCode(parseInt(b, 2)) + '</b>' : '?'}
+              </div>
+            `).join('')}
+          </div>
+          <button id="decAllBtn" class="btn small-btn alt" style="margin-bottom:14px;">GIẢI MÃ TẤT CẢ</button>`;
+      } else {
+        mainHtml += `
+          <div class="mono">${c.enc}</div>
+          <p class="small">BẢNG CHỮ CÁI: ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
+          <p>ĐỘ DỊCH (Shift): <b id="sv" style="color:var(--live);font-size:18px;">${lv3Shift}</b></p>
+          <input type="range" id="shiftRange" min="1" max="25" value="${lv3Shift}">
+          <p class="small">KẾT QUẢ GIẢI MÃ TRỰC TIẾP:</p>
+          <div class="mono" id="prev">${caesar(c.enc, lv3Shift)}</div>`;
+      }
+      
+      mainHtml += `
+          <div style="margin-top:16px;">
+            <label for="ans" class="small" style="display:block;margin-bottom:6px;">NHẬP ĐÁP ÁN:</label>
+            <div class="row">
+              <input type="text" id="ans" autocomplete="off" placeholder="GÕ ĐÁP ÁN VÀO ĐÂY...">
+              <button id="chk3Btn" class="btn g">GIẢI MÃ THÔNG ĐIỆP</button>
+            </div>
+          </div>
+        </div>
+        ${aux3HTML(L.step)}`;
+        
+      st.innerHTML = mainHtml;
+      st.scrollTop = 0;
+      
+      // Gắn sự kiện
+      if (c.id !== 'c2') {
+        const rngEl = $('#shiftRange');
+        if (rngEl) {
+          rngEl.oninput = () => {
+            lv3Shift = Math.round(+rngEl.value);
+            $('#sv').textContent = lv3Shift;
+            $('#prev').textContent = caesar(c.enc, lv3Shift);
+            const stEl = $('#strip');
+            if (stEl) {
+              const set = new Set(c.enc.replace(/[^A-Z]/g, '').split(''));
+              stEl.style.transform = stripX(lv3Shift);
+              [...stEl.children].forEach((e, k) => e.classList.toggle('hl', set.has(AB[((k - (26 - lv3Shift)) % 26 + 26) % 26])));
+              const cap = $('#labcap'); if (cap) cap.innerHTML = labCap(c);
+            }
+          };
+        }
+      } else {
+        $$('.bin-chip', st).forEach(ch => {
+          ch.onclick = () => {
+            sfx.click();
+            const idx = +ch.dataset.idx;
+            binDecoded[idx] = 1;
+            lastBit = idx;
+            render();
+          };
+        });
+        const da = $('#decAllBtn');
+        if (da) {
+          da.onclick = () => {
+            sfx.ok();
+            const n = c.enc.split(' ').length;
+            for (let i = 0; i < n; i++) binDecoded[i] = 1;
+            lastBit = n - 1;
+            render();
+          };
+        }
+      }
+      
+      const chk = $('#chk3Btn');
+      if (chk) {
+        chk.onclick = () => {
+          const a = norm($('#ans').value);
+          if (a === c.ans) {
+            sfx.ok();
+            L.step++;
+            if (L.step < 3) {
+              modal({
+                cls: 'ok',
+                title: 'SUCCESS',
+                sub: `Thử thách ${L.step}/3 hoàn thành · +${c.xp} XP`,
+                html: `<p>${c.edu}</p>`,
+                buttons: [{
+                  label: 'NEXT CHALLENGE',
+                  fn: () => { lv3Shift = 1; binDecoded = []; lastBit = -1; render(); }
+                }]
+              });
+            } else {
+              api.done('ĐÃ KHÔI PHỤC ENCRYPTION CORE', `<p>${c.edu}</p><p>Hệ thống mã hóa và giải mã thông tin đã được kiểm chứng an toàn. Chìa khóa Security Key 03 đã được thu thập.</p>`);
+            }
+          } else {
+            api.wrong(a ? `"${a}" chưa phải thông điệp gốc. Điều chỉnh Shift hoặc sắp xếp lại ký tự ASCII.` : 'Vui lòng nhập đáp án vào ô.');
+          }
+        };
+      }
+    };
+    render();
+  }
+});
+
+/* --------------------------------------------------------------------------
+   LEVEL 4: INCIDENT RESPONSE (Từ file gốc lv4.html)
+   -------------------------------------------------------------------------- */
+const NODES4 = [
+  ['NODE-01','i1','Máy chủ xác thực tài khoản',80,55],
+  ['NODE-02','i2','Cơ sở dữ liệu chính',80,245],
+  ['NODE-03',null,'Hệ thống sao lưu (Backup)',260,40],
+  ['NODE-04','i3','Cổng truy cập mạng',440,55],
+  ['NODE-05',null,'Máy chủ nhật ký (Log)',440,245]
+];
+const SL = {
+  normal: ['BÌNH THƯỜNG','Đang hoạt động bình thường.'],
+  warn: ['CẢNH BÁO','Có liên quan đến một sự cố chưa được xử lý.'],
+  danger: ['BỊ ẢNH HƯỞNG','Đang là mục tiêu của sự cố hiện tại.'],
+  ok: ['ĐÃ XỬ LÝ','Sự cố đã được xử lý, hoạt động ổn định.']
+};
+
+let nsel = null, l4Pen = 0, l4Sel = new Set();
+function nstate(n) {
+  const d = k => L.solvedInc && L.solvedInc.has(k);
+  const act = ['i1','i2','i3'].find(k => !d(k));
+  if (!act) return 'ok';
+  return n[1] ? (d(n[1]) ? 'ok' : n[1] === act ? 'danger' : 'warn') : 'normal';
+}
+
+function mapHtml() {
+  const ns = NODES4.map(nstate);
+  const lines = NODES4.map((n, i) => `<line x1="260" y1="150" x2="${n[3]}" y2="${n[4]}" class="ln s-${ns[i]}"/>`).join('');
+  const nodes = NODES4.map((n, i) => `
+    <g class="nd s-${ns[i]} ${nsel === i ? 'sel' : ''}" tabindex="0" role="button" data-node="${i}">
+      <rect x="${n[3] - 62}" y="${n[4] - 23}" width="124" height="46" rx="6"/>
+      <text x="${n[3]}" y="${n[4] - 3}" text-anchor="middle" class="t1">${n[0]}</text>
+      <text x="${n[3]}" y="${n[4] + 14}" text-anchor="middle" class="t2">${SL[ns[i]][0]}</text>
+    </g>`).join('');
+  const allok = ns.every(x => x === 'ok');
+  const det = nsel !== null ? `<b>${NODES4[nsel][0]}</b> – ${NODES4[nsel][2]}. Trạng thái: <b>${SL[ns[nsel]][0]}</b>. ${SL[ns[nsel]][1]}` : 'Chọn một NODE để xem chi tiết.';
+  return `
+    <div class="scr">
+      <svg viewBox="0 0 520 290" class="nmap" role="img" aria-label="Bản đồ mạng">${lines}
+        <g class="srv s-${allok ? 'ok' : 'normal'}">
+          <rect x="205" y="127" width="110" height="46" rx="6"/>
+          <text x="260" y="146" text-anchor="middle" class="t1">MÁY CHỦ</text>
+          <text x="260" y="163" text-anchor="middle" class="t2">${allok ? 'ỔN ĐỊNH' : 'TRUNG TÂM'}</text>
+        </g>
+        ${nodes}
+      </svg>
+    </div>
+    <p class="leg">
+      <span class="s-normal"><i class="lgdot"></i>Bình thường</span>
+      <span class="s-warn"><i class="lgdot"></i>Cảnh báo</span>
+      <span class="s-danger"><i class="lgdot"></i>Bị ảnh hưởng</span>
+      <span class="s-ok"><i class="lgdot"></i>Đã xử lý</span>
+    </p>
+    <p id="ndet" class="small">${det}</p>`;
+}
+
+function l4Stats() {
+  const d = id => L.solvedInc && L.solvedInc.has(id);
+  const f = d('fd');
+  let h = 35, i = 30, s = 30, n = 30;
+  G_INC.forEach(c => {
+    if (d(c.id)) { h += c.fx.h || 0; i += c.fx.i || 0; s += c.fx.s || 0; n += c.fx.n || 0; }
+  });
+  if (f) { h = i = s = n = 100; }
+  return {
+    h: Math.max(5, Math.min(100, h - l4Pen)),
+    i: Math.min(100, i),
+    s: Math.min(100, s),
+    n: Math.min(100, n)
+  };
+}
+
+const sbHtml = (n, v, c) => `
+  <p style="margin:8px 0 2px" class="small">${n}: <b style="color:${c}">${v}%</b></p>
+  <div class="progress" style="width:100%;"><div style="height:100%;width:${v}%;background:${c}"></div></div>`;
+
+function aux4HTML() {
+  const d = k => L.solvedInc && L.solvedInc.has(k);
+  const all3 = d('i1') && d('i2') && d('i3');
+  const st = l4Stats();
+  const T = [
+    [d('i1'), 'Phát hiện đăng nhập bất thường', `Tài khoản ${G_SC.a} đăng nhập từ một thiết bị lạ.`],
+    [d('i2'), 'Phát hiện lỗi dữ liệu', `Cơ sở dữ liệu ${G_SC.d} bị hỏng, cần khôi phục.`],
+    [d('i3'), 'Phát hiện truy cập trái phép', 'NODE-04 có dấu hiệu bị truy cập trái phép.'],
+    [all3, 'Hoàn thành xử lý các sự cố', 'Cả ba sự cố đã được xử lý đúng cách.'],
+    [d('fd'), 'Khôi phục THE LAST FIREWALL', 'Các biện pháp bảo vệ cuối cùng đã được kích hoạt.']
+  ];
+  const tl = T.map((t, i) => `
+    <li class="${t[0] ? 'on' : !T.slice(0, i).some(x => !x[0]) ? 'cur' : ''}">
+      <span class="dot"></span>
+      <div><b>${i+1}. ${t[1]}</b> <span class="tag" style="margin-left:6px;">${t[0] ? 'COMPLETED' : 'PENDING'}</span><br><span class="small">${t[2]}</span></div>
+    </li>`).join('');
+    
+  const M = [
+    ['SYSTEM HEALTH – Sức khỏe hệ thống', st.h],
+    ['DATA INTEGRITY – Toàn vẹn dữ liệu', st.i],
+    ['SECURITY LEVEL – Mức bảo mật', st.s],
+    ['NETWORK STATUS – Trạng thái mạng', st.n]
+  ];
+  const mt = M.map(m => {
+    const v = m[1], c = v >= 70 ? 'ok' : v >= 40 ? 'warn' : 'danger', l = v >= 70 ? 'ỔN ĐỊNH' : v >= 40 ? 'CẢNH BÁO' : 'NGUY HIỂM';
+    return `<div class="mt"><span class="small">${m[0]}</span><div class="bar"><i class="b-${c}" style="width:${v}%"></i></div><b class="s-${c}">${v}% · ${l}</b></div>`;
+  }).join('');
+  
+  return `
+    <div class="g2b">
+      <div class="panel"><h3>NETWORK MAP – Bản đồ mạng</h3><div id="nmapBox">${mapHtml()}</div></div>
+      <div class="panel"><h3>INCIDENT TIMELINE – Diễn biến sự cố</h3><ul class="tl">${tl}</ul></div>
+    </div>
+    <div class="panel">
+      <h3>SYSTEM MONITOR – Giám sát hệ thống</h3>
+      <div class="mts">${mt}</div>
+      ${d('fd') ? '<p style="color:var(--live);margin-top:10px;">Hệ thống đã đạt trạng thái ổn định.</p>' : ''}
+    </div>`;
+}
+
+LEVELS.push({
+  code: 'LEVEL 04',
+  name: 'FINAL FIREWALL (INCIDENT RESPONSE)',
+  key: 'SECURITY KEY 04',
+  max: 1000,
+  time: 540,
+  totalSteps: 4,
+  alertTitle: 'SYSTEM ALERT',
+  alert: [
+    '<b>Multiple infrastructure incidents detected.</b>',
+    'Sau khi Encryption Core được khôi phục, nhiều sự cố an ninh mạng xảy ra cùng lúc.',
+    'Bạn là Nhân viên an ninh (Security Operator): hãy xử lý từng sự cố và đưa ra quyết định cuối cùng.'
+  ],
+  hint: step => step < 3 ? G_INC[step]?.hint : G_FD?.hint,
+  start(st) {
+    L.step = 0;
+    L.solvedInc = new Set();
+    l4Pen = 0;
+    l4Sel = new Set();
+    nsel = null;
+    
+    const render = () => {
+      hud();
+      const stData = l4Stats();
+      const inc = L.step < 3 ? G_INC[L.step] : null;
+      
+      let leftPanel = `
+        <div class="panel">
+          <h3>TRẠNG THÁI HỆ THỐNG</h3>
+          ${sbHtml('Sức khỏe hệ thống', stData.h, '#F2F2F2')}
+          ${sbHtml('Toàn vẹn dữ liệu', stData.i, '#3FD6C6')}
+          ${sbHtml('Mức bảo mật', stData.s, '#94A3B8')}
+          <p class="small">Máy chủ: ${stData.h > 60 ? '<b style="color:var(--live)">ONLINE</b>' : '<b style="color:var(--danger)">SUY GIẢM</b>'} | Mạng: ${stData.s > 60 ? '<b style="color:var(--live)">AN TOÀN</b>' : '<b style="color:var(--danger)">BỊ HỞ</b>'}</p>
+          <h3>SỰ CỐ</h3>
+          ${G_INC.map(c => `<div class="inc ${L.solvedInc.has(c.id) ? 'ok2' : ''}">${L.solvedInc.has(c.id) ? '✓ ' : '⚠ '}${c.name}</div>`).join('')}
+          <div class="inc ${L.solvedInc.has('fd') ? 'ok2' : ''}">${L.solvedInc.has('fd') ? '✓ ' : '⚙ '}QUYẾT ĐỊNH CUỐI CÙNG</div>
+        </div>`;
+        
+      let rightPanel = `<div class="panel">`;
+      if (inc) {
+        const letters = 'ABCD';
+        rightPanel += `
+          <h2>SỰ CỐ 0${L.step + 1} – ${inc.name}</h2>
+          <p class="small"><b>Tình huống – ${G_SC.title}:</b> ${G_SC.intro}</p>
+          <pre class="term" style="min-height:100px;">${inc.alert}</pre>
+          <div id="incOpts">
+            ${inc.opts.map((o, i) => `<button class="opt" data-i="${i}">${letters[i]}. ${o}</button>`).join('')}
+          </div>`;
+      } else {
+        rightPanel += `
+          <h2>QUYẾT ĐỊNH CUỐI CÙNG – KHÔI PHỤC THE LAST FIREWALL</h2>
+          <p style="color:var(--live)">Đã xem xét xong mọi sự cố. Hãy chọn các biện pháp bảo vệ cuối cùng.</p>
+          <p class="small">Chọn đúng 4 biện pháp an toàn (có thể chọn/bỏ chọn).</p>
+          <div id="fdOpts">
+            ${G_FD.opts.map((o, i) => `<button class="opt ${l4Sel.has(i) ? 'sel' : ''}" data-fdi="${i}">${l4Sel.has(i) ? '[✓] ' : '[ ] '}${o[0]}</button>`).join('')}
+          </div>
+          <button id="restoreFwBtn" class="btn g big" style="margin-top:14px;">KHÔI PHỤC TƯỜNG LỬA</button>`;
+      }
+      rightPanel += `</div>`;
+      
+      st.innerHTML = `
+        <div class="prompt"><b>FINAL FIREWALL – ${L.step < 3 ? 'Sự cố 0' + (L.step + 1) + '/3' : 'Quyết định cuối cùng'}</b></div>
+        <div class="grid2">${leftPanel}${rightPanel}</div>
+        ${aux4HTML()}`;
+      st.scrollTop = 0;
+      
+      // Node click
+      $$('#nmapBox .nd', st).forEach(nd => {
+        nd.onclick = () => {
+          nsel = +nd.dataset.node;
+          $('#nmapBox').innerHTML = mapHtml();
+        };
+      });
+      
+      // Option click
+      if (inc) {
+        $('#incOpts').onclick = e => {
+          const btn = e.target.closest('.opt');
+          if (!btn) return;
+          sfx.click();
+          const i = +btn.dataset.i;
+          if (i !== inc.ok) {
+            l4Pen = Math.min(l4Pen + 8, 40);
+            api.wrong(inc.why[i]);
+            render();
+          } else {
+            sfx.ok();
+            L.solvedInc.add(inc.id);
+            L.step++;
+            modal({
+              cls: 'ok',
+              title: inc.done,
+              sub: `+200 XP bonus`,
+              html: `<p>${inc.why[i]}</p>`,
+              buttons: [{
+                label: L.step < 3 ? 'NEXT INCIDENT' : 'NEXT: QUYẾT ĐỊNH CUỐI CÙNG',
+                fn: render
+              }]
+            });
+          }
+        };
+      } else {
+        $('#fdOpts').onclick = e => {
+          const btn = e.target.closest('.opt');
+          if (!btn) return;
+          sfx.click();
+          const idx = +btn.dataset.fdi;
+          if (l4Sel.has(idx)) l4Sel.delete(idx);
+          else l4Sel.add(idx);
+          render();
+        };
+        
+        $('#restoreFwBtn').onclick = () => {
+          const bad = [...l4Sel].filter(i => !G_FD.opts[i][1]);
+          const miss = G_FD.opts.map((o, i) => o[1] ? i : -1).filter(i => i >= 0 && !l4Sel.has(i));
+          if (bad.length) {
+            l4Pen = Math.min(l4Pen + 8, 40);
+            return api.wrong(`<b>Biện pháp không an toàn:</b><br>${bad.map(i => '• ' + G_FD.opts[i][0] + ': ' + G_FD.opts[i][2]).join('<br>')}<br><br>Bỏ chọn biện pháp không an toàn rồi thử lại.`);
+          }
+          if (miss.length) {
+            return api.wrong(`Còn thiếu ${miss.length} biện pháp cần thiết. Hãy nghĩ: bảo vệ tài khoản → khôi phục → kiểm tra → giám sát. Firewall chưa thể khôi phục.`);
+          }
+          sfx.ok();
+          L.solvedInc.add('fd');
+          L.step = 4;
+          api.done('ĐÃ KHÔI PHỤC THE LAST FIREWALL', `<p>Hệ thống an ninh CYBERVERSE: ĐANG HOẠT ĐỘNG. Mọi sự cố máy chủ đã xử lý triệt để và kích hoạt lớp bảo vệ tầng mạng.</p>`);
+        };
+      }
+    };
+    render();
+  }
+});
+
+/* --------------------------------------------------------------------------
+   LEVEL 5: FINAL FIREWALL: SYSTEM OVERRIDE (Từ file gốc lv5.html)
+   -------------------------------------------------------------------------- */
+const SEV = ['CRITICAL','HIGH','MEDIUM','LOW'];
+const ALERTS_LV5 = [
+  { id:'login', tag:'ALERT 01 · ACCOUNT', name:'Đăng nhập bất thường', sev:0,
+    t:'Tài khoản nhân viên <b>nv.minh</b> đăng nhập lúc 03:12 từ một quốc gia chưa từng truy cập, sau 14 lần nhập sai mật khẩu. Tài khoản chưa bật MFA.',
+    ok:'Có dấu hiệu tài khoản đã bị chiếm quyền và sự cố đang diễn ra, nên phải xử lý ngay.',
+    under:'<b>Đánh giá quá thấp.</b> Đăng nhập từ nơi lạ sau nhiều lần đoán mật khẩu, lại không có MFA, cho thấy kẻ tấn công có thể đã vào được hệ thống.',
+    hint:'Hỏi bản thân: sự cố đang diễn ra không, và kẻ tấn công đã vào được hệ thống chưa?' },
+  { id:'backup', tag:'ALERT 02 · DATA', name:'Dữ liệu chưa được sao lưu', sev:2,
+    t:'Một số dữ liệu của phòng kế toán chưa được sao lưu trong tuần này. Hệ thống vẫn hoạt động bình thường.',
+    ok:'Chưa có sự cố thực sự, nhưng nếu xảy ra lỗi thì dữ liệu sẽ không khôi phục được. Cần lên lịch sao lưu sớm.',
+    under:'<b>Đánh giá quá thấp.</b> Dữ liệu không có bản sao lưu sẽ không thể phục hồi khi gặp sự cố, nên không thể xem nhẹ.',
+    over:'<b>Đánh giá quá cao.</b> Hệ thống vẫn chạy bình thường và chưa có dấu hiệu bị tấn công. Đây là rủi ro cần xử lý theo kế hoạch, chưa phải khẩn cấp.',
+    hint:'Có kẻ tấn công đang hoạt động không, hay đây là một rủi ro sẽ gây hại nếu có sự cố xảy ra sau này?' },
+  { id:'mail', tag:'ALERT 03 · EMAIL', name:'Email đáng ngờ gửi hàng loạt', sev:1,
+    t:'Một email giả mạo bộ phận IT, yêu cầu “xác minh mật khẩu”, được gửi tới <b>120 người dùng</b>. Chưa ai báo đã bấm vào liên kết.',
+    ok:'Thư lừa đảo đã tới nhiều người và có thể lan rộng. Cần chặn và cảnh báo nhanh, dù chưa xác nhận ai bị ảnh hưởng.',
+    under:'<b>Đánh giá quá thấp.</b> Một email phishing gửi cho nhiều người có thể làm lộ nhiều tài khoản cùng lúc.',
+    over:'<b>Đánh giá quá cao.</b> Hiện chưa ai bấm vào liên kết và chưa có tài khoản nào bị xác nhận bị chiếm, nên chưa tới mức CRITICAL.',
+    hint:'Phạm vi ảnh hưởng rộng, nhưng đã có ai bị thiệt hại thật chưa?' },
+  { id:'device', tag:'ALERT 04 · DEVICE', name:'Thiết bị cần kiểm tra', sev:3,
+    t:'Một máy tính ở phòng lab cần kiểm tra vì lâu chưa cập nhật bản vá. Không có dấu hiệu bất thường và máy không lưu dữ liệu nhạy cảm.',
+    ok:'Không có dấu hiệu bị xâm nhập và không chứa dữ liệu nhạy cảm. Chỉ cần kiểm tra và cập nhật theo lịch.',
+    over:'<b>Đánh giá quá cao.</b> Thiết bị chưa có dấu hiệu bị xâm nhập và không giữ dữ liệu nhạy cảm, nên không cần ưu tiên trước các sự cố đang đe dọa dữ liệu.',
+    hint:'Thiết bị này có dấu hiệu bị tấn công hoặc chứa dữ liệu quan trọng không?' },
+  { id:'ransom', tag:'ALERT 05 · SERVER', name:'Phát hiện mã độc tống tiền', sev:0,
+    t:'Máy chủ dữ liệu khách hàng bắt đầu <b>mã hóa tệp hàng loạt</b> và xuất hiện ghi chú đòi tiền chuộc. Mã độc đang lan sang các máy khác trong mạng nội bộ.',
+    ok:'Mã độc đang hoạt động và lan rộng ngay lúc này, đe dọa trực tiếp dữ liệu khách hàng. Phải cô lập máy chủ ngay lập tức.',
+    under:'<b>Đánh giá quá thấp.</b> Ransomware đang mã hóa dữ liệu thật và lan sang các máy khác — đây là sự cố đang diễn ra với hậu quả nghiêm trọng, không thể chờ xử lý theo lịch.',
+    hint:'Mã độc có đang hoạt động và lan rộng ngay lúc này không?' },
+  { id:'onboard', tag:'ALERT 06 · ACCESS', name:'Tài khoản thực tập sinh mới chờ cấp quyền', sev:3,
+    t:'Một thực tập sinh mới được tạo tài khoản nhưng <b>chưa được cấp quyền truy cập hệ thống nào</b>. Đây là bước chuẩn bị bình thường trước ngày làm việc đầu tiên.',
+    ok:'Đây là quy trình cấp tài khoản bình thường, chưa có quyền truy cập nào được cấp và không có dấu hiệu bất thường.',
+    over:'<b>Đánh giá quá cao.</b> Tài khoản chưa có quyền truy cập nào và đây chỉ là bước chuẩn bị theo quy trình, không có dấu hiệu rủi ro nào.',
+    hint:'Tài khoản này đã có quyền truy cập hoặc dấu hiệu bất thường nào chưa?' }
+];
+
+const SCENARIOS2 = [
+  { tag:'SCENARIO · ACCOUNT BREACH', bar:'SECURITY LOG · ACCOUNT MONITOR',
+    head:'Tài khoản: nv.minh@cyberverse.corp (giả lập)', status:'SUSPICIOUS ACTIVITY',
+    logs:['03:12 · Đăng nhập thành công từ địa chỉ lạ, quốc gia chưa từng truy cập.','03:14 · Email khôi phục của tài khoản bị thay đổi.','03:15 · Hơn 2.400 tệp được tải xuống chỉ trong vài phút.'],
+    q:'Một tài khoản nhân viên có dấu hiệu bị xâm nhập. Bạn sẽ xử lý thế nào?',
+    hint:'Hãy nghĩ đến quy trình chính thức của tổ chức: ai có trách nhiệm điều tra và khôi phục tài khoản?',
+    opts:[
+      { t:'Bỏ qua cảnh báo vì có thể chỉ là báo động nhầm', why:'Bỏ qua cảnh báo cho kẻ tấn công thêm thời gian giữ quyền truy cập, lấy dữ liệu và đổi thông tin khôi phục. Mỗi phút chờ đợi làm thiệt hại lớn hơn.' },
+      { t:'Chia sẻ mật khẩu tài khoản đó để nhiều người cùng kiểm tra', why:'Chia sẻ mật khẩu làm lộ thông tin đăng nhập cho nhiều người hơn, không thể truy vết ai đã làm gì, và vi phạm nguyên tắc không bao giờ chia sẻ mật khẩu.' },
+      { t:'Báo cáo sự cố, sử dụng quy trình khôi phục chính thức và yêu cầu bộ phận phụ trách kiểm tra', ok:1 },
+      { t:'Xóa toàn bộ dữ liệu ngay lập tức', why:'Xóa dữ liệu làm mất bằng chứng điều tra và cả dữ liệu hợp pháp, trong khi tài khoản vẫn có thể đang bị kẻ tấn công điều khiển.' }
+    ],
+    summary:'Phương án đúng là <b>báo cáo sự cố và dùng quy trình khôi phục chính thức</b>. Khi nghi ngờ tài khoản bị xâm nhập, hãy báo cáo ngay, không tự xử lý một mình và không chia sẻ mật khẩu.' },
+  { tag:'SCENARIO · PHISHING EMAIL', bar:'INBOX · MAIL SECURITY SCAN',
+    head:'Từ: "IT Support" <it-support@cyberversee-corp.com> (giả lập)', status:'SUSPECTED PHISHING',
+    logs:['Tiêu đề: "Tài khoản của bạn sẽ bị khóa trong 24 giờ".','Yêu cầu bấm vào liên kết lạ để "xác minh mật khẩu" ngay lập tức.','Tên miền người gửi viết sai chính tả: cyberversee-corp.com (thừa một chữ "e").'],
+    q:'Bạn nhận được email này. Bạn sẽ làm gì?',
+    hint:'So sánh kỹ tên miền người gửi với tên miền thật, và nhớ: không ai hợp lệ ép bạn bấm liên kết ngay lập tức.',
+    opts:[
+      { t:'Bấm vào liên kết ngay để kiểm tra xem có đúng không', why:'Bấm vào liên kết nghi ngờ có thể dẫn tới trang giả mạo để lấy cắp mật khẩu hoặc cài mã độc vào máy.' },
+      { t:'Không bấm liên kết, báo cáo email cho bộ phận an ninh/IT rồi xóa', ok:1 },
+      { t:'Trả lời email để hỏi người gửi xem có phải thật không', why:'Trả lời cho kẻ lừa đảo chỉ xác nhận địa chỉ email của bạn đang hoạt động, khiến bạn dễ bị nhắm tới nhiều hơn.' },
+      { t:'Chuyển tiếp email cho đồng nghiệp để họ tự kiểm tra giúp', why:'Chuyển tiếp email phishing có thể lan rủi ro sang người khác thay vì ngăn chặn nó tại nguồn.' }
+    ],
+    summary:'Phương án đúng là <b>không bấm liên kết, báo cáo cho bộ phận an ninh/IT rồi xóa</b>. Luôn kiểm tra kỹ tên miền người gửi và xác minh qua kênh chính thức trước khi tin bất kỳ yêu cầu khẩn cấp nào.' },
+  { tag:'SCENARIO · SOCIAL ENGINEERING', bar:'CALL LOG · UNVERIFIED CALLER',
+    head:'Cuộc gọi đến: "Bộ phận kỹ thuật tổng đài" (giả lập)', status:'UNVERIFIED CALLER',
+    logs:['Người gọi xưng là kỹ thuật viên nội bộ, yêu cầu đọc mã OTP vừa gửi để "khắc phục sự cố hệ thống".','Người gọi tạo áp lực thời gian: "cần xử lý ngay trong vài phút, nếu không tài khoản sẽ bị khóa".','Số điện thoại gọi đến không có trong danh bạ nội bộ của công ty.'],
+    q:'Bạn sẽ phản ứng thế nào với cuộc gọi này?',
+    hint:'Không nhân viên hợp lệ nào cần bạn đọc mã OTP qua điện thoại. Hãy nghĩ cách xác minh danh tính người gọi qua kênh khác.',
+    opts:[
+      { t:'Đọc mã OTP vì người gọi có vẻ biết rõ về hệ thống', why:'Không nhân viên hợp lệ nào cần bạn đọc mã OTP qua điện thoại; đây là dấu hiệu lừa đảo nhằm chiếm quyền tài khoản.' },
+      { t:'Từ chối cung cấp mã, cúp máy và xác minh lại qua kênh nội bộ chính thức', ok:1 },
+      { t:'Đọc một phần mã để tỏ thiện chí hợp tác', why:'Chỉ cần một phần hoặc toàn bộ mã OTP bị lộ cũng có thể đủ để kẻ tấn công chiếm quyền tài khoản.' },
+      { t:'Im lặng cúp máy mà không báo cáo gì cả', why:'Không báo cáo khiến đội an ninh không biết để cảnh báo người khác, và kẻ gian có thể tiếp tục gọi cho đồng nghiệp khác.' }
+    ],
+    summary:'Phương án đúng là <b>từ chối cung cấp mã, cúp máy và xác minh lại qua kênh nội bộ chính thức</b>. Mã OTP không bao giờ nên được đọc cho người khác, kể cả người tự xưng là nhân viên kỹ thuật.' },
+  { tag:'SCENARIO · USB DROP', bar:'DEVICE LOG · UNKNOWN MEDIA',
+    head:'Vị trí: bãi đỗ xe công ty (giả lập)', status:'UNVERIFIED DEVICE',
+    logs:['Một USB không rõ nguồn gốc được tìm thấy ở bãi đỗ xe, có dán nhãn "LƯƠNG THƯỞNG Q4 - MẬT".','Không có thông tin chủ sở hữu hoặc tem kiểm định của công ty trên thiết bị.','Đây là thủ đoạn phổ biến để phát tán mã độc qua thiết bị USB.'],
+    q:'Bạn nhặt được chiếc USB này. Bạn sẽ làm gì?',
+    hint:'Một thiết bị lạ, không rõ nguồn gốc không nên được cắm vào bất kỳ máy nào, kể cả "chỉ để xem thử".',
+    opts:[
+      { t:'Cắm vào máy cá nhân để xem file "LƯƠNG THƯỞNG Q4" trước', why:'Cắm USB lạ vào bất kỳ máy nào, kể cả máy cá nhân, có thể khiến mã độc lây lan ngay lập tức, bất kể nội dung tên file hấp dẫn thế nào.' },
+      { t:'Mang USB giao nộp cho bộ phận an ninh/IT, không cắm vào bất kỳ máy nào', ok:1 },
+      { t:'Cắm vào máy công ty vì máy công ty có phần mềm diệt virus', why:'Phần mềm diệt virus không chặn được mọi loại mã độc, đặc biệt là các kỹ thuật tấn công qua phần cứng USB được thiết kế riêng.' },
+      { t:'Bỏ lại USB ở chỗ cũ và không báo cho ai', why:'Không báo cáo khiến thiết bị vẫn còn đó để người khác vô tình nhặt và cắm vào máy của họ.' }
+    ],
+    summary:'Phương án đúng là <b>giao nộp cho bộ phận an ninh/IT mà không cắm vào máy nào</b>. USB không rõ nguồn gốc là thủ đoạn tấn công phổ biến (USB drop attack); không bao giờ nên cắm thử.' },
+  { tag:'SCENARIO · PUBLIC WI-FI', bar:'NETWORK LOG · WI-FI CONNECTION',
+    head:'Mạng phát hiện: "Free_Cafe_WiFi" và "Free_Cafe_WiFi_5G" (giả lập)', status:'UNENCRYPTED NETWORK',
+    logs:['Hai mạng Wi-Fi gần giống tên quán cà phê cùng xuất hiện, một mạng không yêu cầu mật khẩu.','Bạn cần đăng nhập vào hệ thống email công ty trong lúc đang ở quán.','Mạng không mật khẩu có thể là điểm phát sóng giả do kẻ tấn công dựng lên để nghe lén.'],
+    q:'Bạn cần kiểm tra email công việc khi đang ở quán cà phê. Bạn sẽ làm gì?',
+    hint:'Hãy nghĩ đến việc xác minh mạng đúng với nhân viên quán, hoặc dùng một kết nối mà bạn kiểm soát được.',
+    opts:[
+      { t:'Kết nối ngay vào mạng không mật khẩu vì tiện và nhanh', why:'Mạng Wi-Fi công cộng không mật khẩu rất dễ bị kẻ tấn công dựng giả để nghe lén dữ liệu đăng nhập của bạn.' },
+      { t:'Hỏi nhân viên quán tên mạng chính xác, hoặc dùng 4G/hotspot cá nhân kèm VPN nếu có', ok:1 },
+      { t:'Kết nối vào mạng có tên gần giống nhất vì chắc là mạng thật', why:'Tên mạng gần giống là dấu hiệu điển hình của mạng giả mạo (evil twin), không nên dùng để suy đoán độ tin cậy.' },
+      { t:'Tắt Wi-Fi trên điện thoại nhưng vẫn dùng máy tính công ty kết nối mạng đó', why:'Vấn đề nằm ở việc kết nối vào mạng không xác thực được, không phải thiết bị nào kết nối; máy tính công ty vẫn gặp rủi ro tương tự.' }
+    ],
+    summary:'Phương án đúng là <b>xác minh tên mạng với nhân viên quán hoặc dùng kết nối riêng (4G/hotspot) kèm VPN</b>. Không nên tin vào mạng Wi-Fi công cộng không xác thực được để xử lý dữ liệu công việc.' },
+  { tag:'SCENARIO · SMS SCAM', bar:'MESSAGE LOG · SMS GATEWAY',
+    head:'Từ: "VIETBANK" (giả lập, số gửi lạ)', status:'SUSPECTED SMISHING',
+    logs:['Nội dung: "Tài khoản của bạn vừa phát sinh giao dịch 15.000.000đ. Nếu không phải bạn, bấm vào link để hủy ngay: bit.ly/xxxx".','Số điện thoại gửi không trùng với tổng đài chính thức của ngân hàng.','Liên kết rút gọn khiến không thể biết trước địa chỉ thật sẽ dẫn tới đâu.'],
+    q:'Bạn nhận được tin nhắn này trên điện thoại cá nhân. Bạn sẽ làm gì?',
+    hint:'Không bấm vào liên kết trong tin nhắn lạ; hãy tự mở ứng dụng ngân hàng hoặc gọi số tổng đài chính thức để kiểm tra.',
+    opts:[
+      { t:'Bấm vào liên kết ngay để hủy giao dịch trước khi bị trừ tiền', why:'Bấm vào liên kết rút gọn trong tin nhắn lạ có thể dẫn tới trang giả mạo nhằm đánh cắp thông tin đăng nhập ngân hàng.' },
+      { t:'Không bấm link, tự mở ứng dụng ngân hàng hoặc gọi tổng đài chính thức để kiểm tra', ok:1 },
+      { t:'Nhắn tin lại số đó để hỏi thông tin giao dịch', why:'Nhắn tin lại cho kẻ lừa đảo chỉ xác nhận số điện thoại của bạn đang hoạt động, không giúp xác minh được gì.' },
+      { t:'Chia sẻ tin nhắn lên mạng xã hội để hỏi mọi người có đúng không', why:'Mất thời gian xác minh công khai trong khi mối đe dọa thật (nếu có) cần được kiểm tra qua kênh chính thức của ngân hàng, không phải mạng xã hội.' }
+    ],
+    summary:'Phương án đúng là <b>không bấm link, tự mở ứng dụng hoặc gọi tổng đài chính thức của ngân hàng để kiểm tra</b>. Tin nhắn giả danh ngân hàng (smishing) luôn tạo áp lực và dùng liên kết rút gọn để che giấu địa chỉ thật.' },
+  { tag:'SCENARIO · CEO FRAUD', bar:'CHAT LOG · INTERNAL MESSAGING',
+    head:'Từ: "Giám đốc Tài chính" (giả lập, tài khoản chat mới tạo)', status:'UNVERIFIED REQUEST',
+    logs:['Tin nhắn: "Tôi đang họp gấp, cần bạn chuyển khoản 80 triệu cho đối tác X ngay trong 15 phút, tôi sẽ giải thích sau".','Tài khoản chat được tạo chỉ vài giờ trước, ảnh đại diện khác với tài khoản chính thức của giám đốc.','Yêu cầu nhấn mạnh phải giữ bí mật và xử lý gấp, không qua email công việc như thường lệ.'],
+    q:'Bạn nhận được yêu cầu chuyển khoản khẩn này. Bạn sẽ làm gì?',
+    hint:'Một yêu cầu chuyển tiền khẩn, bất thường và yêu cầu giữ bí mật là dấu hiệu kinh điển của lừa đảo giả danh lãnh đạo (CEO fraud).',
+    opts:[
+      { t:'Chuyển khoản ngay vì sợ trễ giờ và làm phật ý cấp trên', why:'Làm theo áp lực thời gian mà không xác minh là đúng điều kẻ lừa đảo mong muốn; tiền chuyển đi khó có thể lấy lại.' },
+      { t:'Dừng lại, xác minh trực tiếp với giám đốc qua số điện thoại hoặc kênh chính thức đã biết trước đó', ok:1 },
+      { t:'Nhắn hỏi lại chính tài khoản chat đó xem có đúng là giám đốc không', why:'Hỏi lại chính kẻ giả mạo không giúp xác minh được gì, vì kẻ tấn công chắc chắn sẽ xác nhận là thật.' },
+      { t:'Chuyển một phần số tiền nhỏ hơn để giảm rủi ro', why:'Chuyển bất kỳ số tiền nào khi chưa xác minh được danh tính người yêu cầu vẫn là hành động rủi ro và sai nguyên tắc.' }
+    ],
+    summary:'Phương án đúng là <b>dừng lại và xác minh trực tiếp qua kênh chính thức đã biết trước đó</b>, không qua chính tài khoản gửi yêu cầu. Yêu cầu chuyển tiền khẩn kèm áp lực bí mật là dấu hiệu lừa đảo giả danh lãnh đạo.' },
+  { tag:'SCENARIO · APP PERMISSIONS', bar:'APP INSTALL LOG · MOBILE DEVICE',
+    head:'Ứng dụng: "QR Scanner Pro" (giả lập, vừa cài đặt)', status:'EXCESSIVE PERMISSIONS',
+    logs:['Ứng dụng quét mã QR yêu cầu quyền truy cập danh bạ, tin nhắn, vị trí và quyền quản trị thiết bị.','Các quyền này không cần thiết cho chức năng quét mã QR cơ bản.','Ứng dụng được tải từ một đường link ngoài kho ứng dụng chính thức.'],
+    q:'Ứng dụng yêu cầu các quyền này ngay khi mở lần đầu. Bạn sẽ làm gì?',
+    hint:'Hãy so sánh quyền được yêu cầu với chức năng thực tế của ứng dụng — chênh lệch lớn là một dấu hiệu cảnh báo.',
+    opts:[
+      { t:'Đồng ý hết tất cả quyền để dùng được ứng dụng ngay', why:'Cấp toàn bộ quyền cho một ứng dụng không rõ nguồn gốc có thể để lộ danh bạ, tin nhắn và vị trí của bạn cho kẻ xấu.' },
+      { t:'Từ chối các quyền không cần thiết, gỡ ứng dụng và chỉ cài phần mềm quét QR từ kho ứng dụng chính thức', ok:1 },
+      { t:'Chỉ đồng ý quyền vị trí vì nghĩ quyền đó ít nguy hiểm nhất', why:'Ứng dụng không rõ nguồn gốc với nhiều quyền bất thường nên bị gỡ bỏ hoàn toàn, không nên cấp bất kỳ quyền nhạy cảm nào.' },
+      { t:'Giữ ứng dụng nhưng tắt wifi mỗi khi dùng để "an toàn hơn"', why:'Tắt wifi không ngăn được việc ứng dụng đọc dữ liệu cục bộ như danh bạ hay tin nhắn, và dữ liệu vẫn có thể bị gửi đi khi có mạng trở lại.' }
+    ],
+    summary:'Phương án đúng là <b>từ chối các quyền không cần thiết, gỡ ứng dụng và chỉ cài phần mềm từ kho ứng dụng chính thức</b>. Quyền truy cập yêu cầu phải tương xứng với chức năng thực tế của ứng dụng.' }
+];
+
+const RESTORES = [
+  { tag:'RESTORE 1/3 · CORE DATABASE', context:'Hệ thống dữ liệu lõi bị hỏng và phải được phục hồi. Có 3 bản sao lưu giả lập.',
+    hint:'Đừng chỉ nhìn vào thời điểm. Hãy xem trạng thái của từng bản sao lưu.',
+    backups:[
+      { id:'A', when:'2 ngày trước', state:'Hoàn chỉnh', why:'Bản này cũ hơn nên bạn mất nhiều dữ liệu hơn. Quan trọng hơn, “hoàn chỉnh” chưa có nghĩa là đã được kiểm tra tính toàn vẹn.' },
+      { id:'B', when:'1 ngày trước', state:'Có cảnh báo lỗi', why:'Bản sao lưu đang có cảnh báo lỗi. Phục hồi từ bản này có thể đưa dữ liệu hỏng trở lại hệ thống.' },
+      { id:'C', when:'6 giờ trước', state:'Đã xác minh toàn vẹn', ok:1 }
+    ],
+    summary:'Chọn <b>Backup C</b>: bản mới nhất <i>và</i> đã được xác minh toàn vẹn. Backup B mới hơn A nhưng đang có cảnh báo lỗi; Backup A chỉ “hoàn chỉnh”, chưa xác minh và cũ hơn nhiều.' },
+  { tag:'RESTORE 2/3 · FILE SERVER', context:'Máy chủ lưu trữ tệp vừa bị ransomware tấn công và cần khôi phục. Có 3 bản sao lưu giả lập.',
+    hint:'Một bản sao lưu được tạo ra ngay trong lúc mã độc đang hoạt động có đáng tin không?',
+    backups:[
+      { id:'D', when:'3 ngày trước', state:'Hoàn chỉnh, chưa xác minh', why:'Bản này cũ hơn các lựa chọn khác và chưa được xác minh toàn vẹn, nên không nên ưu tiên khi có lựa chọn tốt hơn.' },
+      { id:'E', when:'10 phút trước', state:'Được tạo trong lúc mã độc đang hoạt động', why:'Bản sao lưu được tạo trong lúc mã độc đang hoạt động có thể đã chứa mã độc hoặc dữ liệu đã bị mã hóa.' },
+      { id:'F', when:'8 giờ trước', state:'Đã xác minh toàn vẹn, tạo trước khi mã độc xuất hiện', ok:1 }
+    ],
+    summary:'Chọn <b>Backup F</b>: được tạo trước khi mã độc xuất hiện và đã xác minh toàn vẹn. Backup E rất mới nhưng được tạo ngay trong lúc tấn công nên có nguy cơ nhiễm mã độc.' },
+  { tag:'RESTORE 3/3 · WEBSITE DATABASE', context:'Cơ sở dữ liệu website bị lỗi sau một đợt bảo trì và cần khôi phục. Có 3 bản sao lưu giả lập.',
+    hint:'Một bản an toàn nhưng quá cũ có thể khiến bạn mất rất nhiều dữ liệu gần đây — hãy so sánh với các lựa chọn còn lại.',
+    backups:[
+      { id:'G', when:'Vài phút trước', state:'Quá trình sao lưu bị gián đoạn giữa chừng', why:'Bản sao lưu bị gián đoạn giữa chừng có thể thiếu hoặc hỏng dữ liệu, không nên dùng để phục hồi.' },
+      { id:'H', when:'1 tuần trước', state:'Đã xác minh toàn vẹn nhưng quá cũ', why:'Bản này an toàn nhưng quá cũ — bạn sẽ mất rất nhiều dữ liệu gần đây trong khi có một lựa chọn mới hơn và vẫn an toàn.' },
+      { id:'I', when:'4 giờ trước', state:'Đã xác minh toàn vẹn', ok:1 }
+    ],
+    summary:'Chọn <b>Backup I</b>: mới nhất trong số các bản an toàn và đã xác minh toàn vẹn. Backup G không đáng tin vì sao lưu bị gián đoạn; Backup H an toàn nhưng làm mất nhiều dữ liệu hơn mức cần thiết.' }
+];
+
+async function restoreFx(st, r, id) {
+  L.busy = true;
+  st.innerHTML = `
+    <div class="prompt"><b>RESTORING SYSTEM</b> · Đang phục hồi từ Backup ${id}...</div>
+    <pre id="fx" class="term"></pre>
+    <div class="progress" style="width:100%;margin-top:14px;"><div id="rbar" style="height:100%;width:0;background:var(--bright);transition:width .6s var(--ease)"></div></div>`;
+  const lines = [
+    `> VERIFYING BACKUP ${id} INTEGRITY ........... [OK]`,
+    '> ISOLATING AFFECTED SYSTEM ............... [OK]',
+    '> RESTORING DATABASE ..................... [OK]',
+    '> RESTORING USER FILES ................... [OK]',
+    '> REBUILDING FIREWALL RULES .............. [OK]',
+    '> SYSTEM STATUS: RESTORED'
+  ];
+  const el = $('#fx');
+  try {
+    for (let i = 0; i < lines.length; i++) {
+      for (const ch of lines[i]) { el.textContent += ch; await sleep(9); }
+      el.textContent += '\n';
+      $('#rbar').style.width = ((i + 1) / lines.length * 100) + '%';
+      sfx.click();
+      await sleep(260);
+    }
+  } finally {
+    L.busy = false;
+  }
+}
+
+const PAIRS = [
+  { k:'Account Security', s:'Sử dụng MFA và mật khẩu riêng biệt', fix:'bảo vệ tài khoản khỏi bị đăng nhập trái phép', why:'MFA thêm lớp xác thực thứ hai, còn mật khẩu riêng biệt giúp một mật khẩu bị lộ không kéo theo các tài khoản khác.', hint:'Rủi ro chính là kẻ gian đăng nhập vào tài khoản của bạn.' },
+  { k:'Phishing Protection', s:'Xác minh nguồn gửi', fix:'kiểm tra người gửi có thật sự đáng tin hay không', why:'Kiểm tra địa chỉ gửi và xác minh qua kênh chính thức giúp nhận ra thư giả mạo trước khi bấm.', hint:'Phishing dùng thư giả mạo. Bạn cần kiểm tra thư đến từ đâu.' },
+  { k:'Personal Data Privacy', s:'Hạn chế chia sẻ thông tin cá nhân', fix:'giảm lượng thông tin về bạn có thể bị lợi dụng', why:'Càng ít thông tin cá nhân bị công khai thì kẻ gian càng khó giả mạo, đoán mật khẩu hoặc nhắm vào bạn.', hint:'Hãy nghĩ tới việc bạn đăng gì và cho ai biết gì về mình.' },
+  { k:'Information Verification', s:'Kiểm tra và đối chiếu nguồn tin', fix:'đánh giá độ tin cậy của thông tin', why:'Đối chiếu nhiều nguồn đáng tin giúp phát hiện tin giả và thông tin sai lệch trước khi tin hoặc chia sẻ.', hint:'Vấn đề ở đây là tin giả, tin sai. Bạn cần so sánh các nguồn.' },
+  { k:'Data Backup', s:'Duy trì bản sao lưu có thể khôi phục', fix:'đảm bảo dữ liệu có thể phục hồi khi gặp sự cố', why:'Sao lưu định kỳ và thử khôi phục để dữ liệu không mất vĩnh viễn khi gặp mã độc hoặc hỏng hóc.', hint:'Hãy nghĩ tới việc dữ liệu bị mất hoặc bị mã hóa và bạn cần lấy lại.' },
+  { k:'Software Updates', s:'Cập nhật phần mềm và vá lỗi thường xuyên', fix:'vá các lỗ hổng mà kẻ tấn công có thể khai thác', why:'Các bản cập nhật thường sửa những lỗ hổng bảo mật đã biết; không cập nhật nghĩa là để lỗ hổng mở sẵn cho kẻ tấn công.', hint:'Kẻ tấn công thường khai thác lỗ hổng phần mềm đã biết nhưng chưa được vá.' },
+  { k:'Network Monitoring', s:'Giám sát nhật ký và lưu lượng mạng bất thường', fix:'phát hiện sớm dấu hiệu xâm nhập trước khi thiệt hại lan rộng', why:'Theo dõi nhật ký và lưu lượng mạng giúp phát hiện hành vi bất thường sớm, trước khi kẻ tấn công gây thiệt hại lớn.', hint:'Vấn đề ở đây là phát hiện sớm một cuộc tấn công đang diễn ra.' },
+  { k:'Incident Response Plan', s:'Xây dựng quy trình ứng phó sự cố rõ ràng', fix:'đảm bảo phản ứng nhanh và đúng cách khi sự cố xảy ra', why:'Một quy trình rõ ràng giúp mọi người biết phải làm gì ngay khi sự cố xảy ra, giảm thời gian phản ứng và sai sót.', hint:'Khi sự cố xảy ra, mọi người cần biết chính xác phải làm gì và theo thứ tự nào.' }
+];
+
+LEVELS.push({
+  code: 'LEVEL 05',
+  name: 'FINAL FIREWALL: SYSTEM OVERRIDE',
+  key: 'SECURITY KEY 05',
+  max: 1500,
+  time: 600,
+  totalSteps: 4,
+  alertTitle: 'CRITICAL SYSTEM ALERT',
+  alert: [
+    '<b>THE LAST FIREWALL IS COLLAPSING.</b>',
+    'All security layers require final verification.',
+    'Agent, this is your final mission.',
+    'Level 05 gồm 4 Phase toàn diện: Chẩn đoán cảnh báo, Quyết định chiến lược, Khôi phục hệ thống và Hoàn tất lớp phòng thủ cuối cùng.'
+  ],
+  hint: step => 'Phân tích kỹ lưỡng từng tình huống, suy xét mức độ nguy hiểm thực tế.',
+  start(st) {
+    L.phase = 1;
+    
+    // PHASE 1
+    const runP1 = () => {
+      L.step = 0; L.n = ALERTS_LV5.length; L.p = 0; L.sol = new Set();
+      hud();
+      st.innerHTML = `
+        <div class="prompt"><b>PHASE 1/4 · SYSTEM DIAGNOSIS</b> · Hệ thống phát ra <b>${ALERTS_LV5.length} cảnh báo giả lập</b>. Hãy phân loại từng cảnh báo theo mức độ nghiêm trọng:</div>
+        <div class="cards">
+          ${ALERTS_LV5.map(a => `
+            <div class="panel" style="margin-top:0;">
+              <div class="tag" style="margin-bottom:6px">${a.tag}</div>
+              <h3>${a.name}</h3>
+              <div class="bio" style="margin:6px 0">${a.t}</div>
+              <div class="sevrow" id="sev-${a.id}">
+                ${SEV.map((s, k) => `<button class="btn small-btn" data-a="${a.id}" data-s="${k}">${s}</button>`).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="panel">
+          <h3>Phân tích</h3>
+          <div id="cnt" class="small">Đã phân loại: 0/${ALERTS_LV5.length}</div>
+          <div id="info" class="info">Chọn mức độ cho từng cảnh báo. Mỗi lựa chọn đều có phản hồi.</div>
+        </div>`;
+      st.scrollTop = 0;
+      
+      st.onclick = e => {
+        const b = e.target.closest('[data-a]');
+        if (!b) return;
+        const a = ALERTS_LV5.find(x => x.id === b.dataset.a), s = +b.dataset.s;
+        if (L.sol.has(a.id)) return;
+        sfx.click();
+        if (s !== a.sev) return api.wrong(s < a.sev ? a.over : a.under);
+        L.sol.add(a.id);
+        L.p = L.sol.size;
+        sfx.ok();
+        $(`#sev-${a.id}`).innerHTML = `<span class="key-badge on">${SEV[a.sev]}</span>`;
+        $('#info').innerHTML = `<b>${a.name} → ${SEV[a.sev]}</b><br>${a.ok}`;
+        $('#cnt').textContent = `Đã phân loại: ${L.sol.size}/${ALERTS_LV5.length}`;
+        hud();
+        if (L.sol.size === ALERTS_LV5.length) {
+          modal({
+            cls: 'ok',
+            title: 'DIAGNOSIS COMPLETE',
+            sub: '+300 XP bonus',
+            html: `<p>Bạn đã phân loại đúng cả ${ALERTS_LV5.length} cảnh báo. Tiến hành bước tiếp theo.</p>`,
+            buttons: [{ label: 'START PHASE 2', fn: runP2 }]
+          });
+        }
+      };
+    };
+    
+    // PHASE 2
+    const runP2 = () => {
+      L.step = 1;
+      L.scenarios = shuffle(SCENARIOS2).slice(0, 3);
+      L.n = L.scenarios.length; L.p = 0; L.cur = 0;
+      hud();
+      
+      const renderP2 = () => {
+        const sc = L.scenarios[L.cur];
+        L.opts = shuffle(sc.opts);
+        st.innerHTML = `
+          <div class="prompt"><b>PHASE 2/4 · THE DECISION</b> · <b>${sc.tag}</b> — Tình huống ${L.p+1}/${L.n}.</div>
+          <div class="mail">
+            <div class="mail-bar"><i></i><i></i><i></i>&nbsp;${sc.bar}</div>
+            <div class="mail-head"><div>${sc.head}</div><div>Trạng thái: <b style="font-weight:400;color:var(--danger)">${sc.status}</b></div></div>
+            <div class="mail-body">${sc.logs.map(l => `<div>${l}</div>`).join('')}</div>
+          </div>
+          <div class="panel">
+            <h3>${sc.q}</h3>
+            <div id="opts">${L.opts.map((o, i) => `<button class="opt" data-i="${i}">${o.t}</button>`).join('')}</div>
+          </div>`;
+        st.scrollTop = 0;
+      };
+      renderP2();
+      
+      st.onclick = e => {
+        const o = e.target.closest('.opt');
+        if (!o) return;
+        sfx.click();
+        const p = L.opts[+o.dataset.i];
+        if (!p.ok) return api.wrong(p.why);
+        L.p++;
+        hud();
+        if (L.p < L.n) {
+          L.cur++;
+          renderP2();
+        } else {
+          modal({
+            cls: 'ok',
+            title: 'ALL DECISIONS CORRECT',
+            sub: '+360 XP bonus',
+            html: `<p>Bạn đã xử lý đúng cả 3 tình huống:</p><ul>${L.scenarios.map(s => `<li><b>${s.tag}:</b> ${s.summary}</li>`).join('')}</ul>`,
+            buttons: [{ label: 'START PHASE 3', fn: runP3 }]
+          });
+        }
+      };
+    };
+    
+    // PHASE 3
+    const runP3 = () => {
+      L.step = 2; L.n = RESTORES.length; L.p = 0; L.cur = 0; L.busy = false;
+      hud();
+      
+      const renderP3 = () => {
+        const r = RESTORES[L.cur];
+        st.innerHTML = `
+          <div class="prompt"><b>PHASE 3/4 · RESTORE THE SYSTEM</b> · <b>${r.tag}</b> — ${L.p}/${RESTORES.length} đã khôi phục xong.<br>${r.context}</div>
+          <div class="cards">
+            ${r.backups.map(b => `
+              <div class="card">
+                <div class="tag">BACKUP ${b.id}</div>
+                <dl><dt>Thời điểm</dt><dd>${b.when}</dd><dt>Trạng thái</dt><dd>${b.state}</dd></dl>
+                <button class="btn pick" data-b="${b.id}">RESTORE FROM BACKUP ${b.id}</button>
+              </div>`).join('')}
+          </div>`;
+        st.scrollTop = 0;
+      };
+      renderP3();
+      
+      st.onclick = async e => {
+        const k = e.target.closest('[data-b]');
+        if (!k || L.busy) return;
+        sfx.click();
+        const r = RESTORES[L.cur], b = r.backups.find(x => x.id === k.dataset.b);
+        if (!b) return;
+        if (!b.ok) return api.wrong(`<b>Backup ${b.id}</b> (${b.when}, ${b.state.toLowerCase()}). ${b.why}`);
+        await restoreFx(st, r, b.id);
+        L.p++; L.cur++; hud();
+        if (L.p < RESTORES.length) {
+          renderP3();
+        } else {
+          modal({
+            cls: 'ok',
+            title: 'SYSTEM RESTORED',
+            sub: '+320 XP bonus',
+            html: `<p>Bạn đã phục hồi đúng cả ${RESTORES.length} tình huống backup.</p>`,
+            buttons: [{ label: 'START PHASE 4: FINAL FIREWALL', fn: runP4 }]
+          });
+        }
+      };
+    };
+    
+    // PHASE 4
+    const runP4 = () => {
+      L.step = 3; L.n = PAIRS.length; L.p = 0; L.sol = new Set(); L.selP = null; L.selS = null;
+      L.order = shuffle(PAIRS.map((_, i) => i));
+      hud();
+      
+      st.innerHTML = `
+        <div class="prompt"><b>PHASE 4/4 · FINAL FIREWALL</b> · Chọn một <b>vấn đề</b> ở cột trái và <b>giải pháp</b> tương ứng ở cột phải. Cặp đúng sẽ được khóa lại:</div>
+        <div class="cards">
+          <div><div class="small" style="margin-bottom:6px;">VẤN ĐỀ</div>${PAIRS.map((p, i) => `<button class="opt" data-p="${i}">${p.k}</button>`).join('')}</div>
+          <div><div class="small" style="margin-bottom:6px;">GIẢI PHÁP</div>${L.order.map(i => `<button class="opt" data-s="${i}">${PAIRS[i].s}</button>`).join('')}</div>
+        </div>
+        <div class="panel">
+          <h3>Phân tích</h3>
+          <div id="cnt" class="small">Đã ghép: 0/${PAIRS.length}</div>
+          <div id="info" class="info">Chọn một vấn đề rồi chọn giải pháp phù hợp.</div>
+        </div>`;
+      st.scrollTop = 0;
+      
+      const mark = () => {
+        $$('[data-p]', st).forEach(b => b.classList.toggle('sel', +b.dataset.p === L.selP));
+        $$('[data-s]', st).forEach(b => b.classList.toggle('sel', +b.dataset.s === L.selS));
+      };
+      
+      st.onclick = e => {
+        const b = e.target.closest('.opt');
+        if (!b || b.classList.contains('done')) return;
+        sfx.click();
+        if (b.dataset.p != null) L.selP = L.selP === +b.dataset.p ? null : +b.dataset.p;
+        else L.selS = L.selS === +b.dataset.s ? null : +b.dataset.s;
+        mark();
+        if (L.selP == null || L.selS == null) return;
+        const p = L.selP, s = L.selS;
+        L.selP = null; L.selS = null;
+        mark();
+        if (p !== s) return api.wrong(`<b>${PAIRS[s].s}</b> chủ yếu giúp ${PAIRS[s].fix}, nên chưa giải quyết đúng rủi ro của <b>${PAIRS[p].k}</b>.`);
+        L.sol.add(p);
+        L.p = L.sol.size;
+        sfx.ok();
+        $$(`[data-p="${p}"],[data-s="${p}"]`, st).forEach(x => { x.classList.add('done'); x.disabled = true; });
+        $('#info').innerHTML = `<b>${PAIRS[p].k} → ${PAIRS[p].s}</b><br>${PAIRS[p].why}`;
+        $('#cnt').textContent = `Đã ghép: ${L.sol.size}/${PAIRS.length}`;
+        hud();
+        if (L.sol.size === PAIRS.length) {
+          L.step = 4;
+          api.done('FINAL FIREWALL ONLINE', `<p>Bạn đã ghép đúng cả ${PAIRS.length} lớp phòng thủ:</p><ul>${PAIRS.map(x => `<li><b>${x.k}</b> → ${x.s}</li>`).join('')}</ul><p><b>Ghi nhớ:</b> an toàn thông tin là sự kết hợp của nhiều lớp bảo vệ, và con người là lớp quan trọng nhất.</p>`);
+        }
+      };
+    };
+    
+    runP1();
+  }
+});
+
+/* ==========================================================================
+   8. MISSION HUB RENDER & ĐIỀU HƯỚNG
+   ========================================================================== */
+function renderHub() {
+  const container = $('#hubList');
+  if (!container) return;
+  container.innerHTML = LEVELS.map((l, i) => {
+    const isUnlocked = S.unlocked[i];
+    const isDone = S.keys[i];
+    const score = S.scores[i] || 0;
+    return `
+      <div class="hub-card ${isDone ? 'active-card' : ''} ${!isUnlocked ? 'locked-card' : ''}">
+        <div>
+          <div class="hub-code">${l.code}</div>
+          <h3 class="hub-title">${l.name}</h3>
+          <p class="hub-desc">${l.alert[1].replace(/<[^>]+>/g, '')}</p>
+        </div>
+        <div>
+          <div class="hub-meta">
+            <span>XP: <b>${score}/${l.max}</b></span>
+            <span>KEY: <b>${isDone ? '🔑 ĐÃ NHẬN' : isUnlocked ? 'CHƯA CÓ' : '🔒 KHÓA'}</b></span>
+          </div>
+          <button class="btn small-btn ${isDone ? 'alt' : 'g'}" style="width:100%;margin-top:10px;"
+            ${!isUnlocked ? 'disabled' : ''} onclick="startFromHub(${i})">
+            ${isDone ? 'REPLAY LEVEL' : isUnlocked ? 'START LEVEL' : 'LOCKED'}
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+window.startFromHub = idx => {
+  sfx.click();
+  startLevel(idx);
+};
+
+$('#hubBtn').onclick = () => { sfx.click(); renderHub(); show('selectHub'); };
+$('#lobbyHubBtn').onclick = () => { sfx.click(); renderHub(); show('selectHub'); };
+$('#backToIntroFromHub').onclick = () => { sfx.click(); show('intro'); };
+$('#endToHubBtn').onclick = () => { sfx.click(); renderHub(); show('selectHub'); };
+
+$('#resetAllProgressBtn').onclick = () => {
+  if (confirm('Bạn có chắc chắn muốn đặt lại toàn bộ tiến trình game?')) {
+    S = freshState();
+    save();
+    renderHub();
+    toast('Đã reset toàn bộ tiến trình.');
+    show('intro');
+    checkContinue();
+  }
+};
+
+function checkContinue() {
+  const b = $('#contBtn');
+  if (S.done || S.scores.some(Boolean) || S.level > 0) {
+    b.hidden = false;
+    b.textContent = S.done ? 'VIEW RESULT' : `CONTINUE (LEVEL 0${S.level + 1})`;
+  } else {
+    b.hidden = true;
+  }
+}
+
+/* ==========================================================================
+   9. KHỞI TẠO CHUNG
+   ========================================================================== */
+$('#initBtn').onclick = () => { sfx.click(); S = { ...freshState(), muted: S.muted }; save(); boot(); };
+$('#storyGo').onclick = () => { sfx.click(); startLevel(0); };
+$('#contBtn').onclick = () => { sfx.click(); S.done ? endGame() : startLevel(S.level); };
+$('#replayBtn').onclick = () => { sfx.click(); S = { ...freshState(), muted: S.muted }; save(); startLevel(0); };
+
+$('#muteBtn').onclick = () => {
+  S.muted = !S.muted;
+  save();
+  $('#muteBtn').textContent = S.muted ? '🔇' : '🔊';
+  toast(S.muted ? 'Đã tắt âm thanh' : 'Đã bật âm thanh');
+};
+$('#muteBtn').textContent = S.muted ? '🔇' : '🔊';
+
+checkContinue();
+hud();
+</script>
+</body>
+</html>
